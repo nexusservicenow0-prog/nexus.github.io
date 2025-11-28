@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for the Fintech Theme */
+        body {
+            font-family: 'Inter', sans-serif;
+            /* Deep black background for a premium feel */
+            background-color: #0d0d0d; 
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .login-card {
+            background: #1a1a1a;
+            border: 1px solid #282828;
+            box-shadow: 0 0 40px rgba(0, 255, 128, 0.1);
+        }
+
+        /* Define the green gradient for the logo and buttons */
+        .green-gradient-text {
+            background-image: linear-gradient(to right, #00FF80, #00C864);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
+        }
+
+        .green-gradient-bg {
+            background-image: linear-gradient(to right, #00FF80, #00C864);
+            transition: all 0.3s ease;
+        }
+        
+        .green-gradient-bg:hover {
+            background-image: linear-gradient(to right, #00C864, #00FF80);
+        }
+
+        /* Simple SVG for the 'N' logo icon */
+        .nexus-logo-icon {
+            width: 50px;
+            height: 50px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-card w-full max-w-md p-8 rounded-2xl">
+        
+        <div class="flex flex-col items-center mb-8">
+            <svg class="nexus-logo-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M25 80 L50 20 L75 80 L50 40 Z" fill="url(#greenGradient)"/>
+                <defs>
+                    <linearGradient id="greenGradient" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#00FF80"/>
+                        <stop offset="1" stop-color="#00C864"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+            <h1 class="text-4xl font-bold green-gradient-text mt-3">N E X U S</h1>
+            <p class="text-sm text-gray-500 mt-1">Secure Account Access</p>
+        </div>
+
+        <form id="login-form" class="space-y-6">
+            
+            <div>
+                <label for="accountId" class="block text-sm font-medium text-gray-400 mb-1">Account ID</label>
+                <input 
+                    type="text" 
+                    id="accountId" 
+                    placeholder="Enter Account ID"
+                    required 
+                    class="w-full px-4 py-3 bg-gray-700 text-white border border-gray-600 rounded-xl focus:border-[#00FF80] focus:ring focus:ring-[#00FF80] focus:ring-opacity-50 transition duration-150"
+                >
+            </div>
+            
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-400 mb-1">Password</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    placeholder="Enter password"
+                    required 
+                    class="w-full px-4 py-3 bg-gray-700 text-white border border-gray-600 rounded-xl focus:border-[#00FF80] focus:ring focus:ring-[#00FF80] focus:ring-opacity-50 transition duration-150"
+                >
+            </div>
+            
+            <button 
+                type="submit" 
+                id="login-button"
+                class="w-full py-3 green-gradient-bg text-gray-900 font-semibold rounded-xl shadow-lg hover:shadow-[#00FF80]/50 transition duration-300"
+            >
+                Log In
+            </button>
+            
+            <div class="text-center pt-2">
+                <a href="signup.html" class="text-sm text-gray-400 hover:text-[#00FF80] transition duration-150">
+                    Don't have an account? <strong>Go to Signup</strong>
+                </a>
+            </div>
+            </form>
+
+        <div class="mt-8 text-center text-gray-600">
+            <img src="/nexuslogo.img.jpg" alt="Security graphic placeholder" class="w-full h-auto rounded-xl opacity-70">
+        </div>
+
+    </div>
+
+    <div id="custom-alert" class="fixed inset-0 bg-black bg-opacity-75 hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-gray-800 p-6 rounded-xl w-full max-w-sm border-2 border-red-500 shadow-2xl shadow-red-900/50">
+            <h3 class="text-xl font-bold text-red-400 mb-3">Login Error</h3>
+            <p id="alert-message" class="text-gray-200 mb-6"></p>
+            <button onclick="closeAlert()" class="w-full py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition">
+                Dismiss
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // --- Configuration Constants ---
+        const USER_DATA_FILE = 'users.json'; // File to load data from
+        const DATA_TOKEN_KEY = 'lgi';       // Key for temporary data storage
+        const AUTH_TOKEN_KEY = 'TID';       // Key for successful authentication token
+        const REDIRECT_PAGE = 'dashboard.html'; // Changed from index.html for typical setup
+
+        // --- DOM Elements ---
+        const loginForm = document.getElementById('login-form');
+        const accountIdInput = document.getElementById('accountId');
+        const passwordInput = document.getElementById('password');
+        const loginButton = document.getElementById('login-button');
+        const customAlert = document.getElementById('custom-alert');
+        const alertMessage = document.getElementById('alert-message');
+
+        // --- Alert Functions ---
+
+        const showAlert = (message) => {
+            alertMessage.textContent = message;
+            customAlert.classList.remove('hidden');
+            loginButton.textContent = 'Log In'; // Reset button text on error
+            loginButton.disabled = false;
+        };
+
+        const closeAlert = () => {
+            customAlert.classList.add('hidden');
+        };
+
+        // Expose to window for inline click handler
+        window.closeAlert = closeAlert;
+
+        /**
+         * Fetches user data from users.json and stores it in the 'lgi' local storage token.
+         * @returns {Promise<Array | null>} The array of user objects, or null on failure.
+         */
+        const fetchAndStoreUserData = async () => {
+            try {
+                // 1. Fetch the JSON file
+                const response = await fetch(USER_DATA_FILE);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const usersData = await response.json();
+                
+                // 2. Store the data in the 'lgi' local storage token
+                localStorage.setItem(DATA_TOKEN_KEY, JSON.stringify(usersData));
+                return usersData;
+            } catch (error) {
+                console.error("Could not load user data for login:", error);
+                showAlert("System error: Could not connect to the user database.");
+                return null;
+            }
+        };
+
+        /**
+         * Handles the login attempt, verifies credentials, and manages tokens.
+         */
+        const handleLogin = async (event) => {
+            event.preventDefault();
+
+            loginButton.textContent = 'Verifying...';
+            loginButton.disabled = true;
+
+            const accountId = accountIdInput.value.trim();
+            const password = passwordInput.value;
+
+            // Step 1: Fetch and store data in 'lgi'
+            let usersData = await fetchAndStoreUserData();
+            
+            if (!usersData || usersData.length === 0) {
+                // Error message already shown in fetchAndStoreUserData
+                return; 
+            }
+
+            // Step 2: Search for Account ID in the data from 'lgi'
+            const user = usersData.find(u => u.account_id === accountId);
+
+            if (!user) {
+                // Account ID not found
+                showAlert("Account not found. Kindly check your Account ID.");
+                return;
+            }
+
+            // Step 3: Check Password
+            if (user.password !== password) {
+                // Password incorrect
+                showAlert("Password incorrect.");
+                return;
+            }
+
+            // Step 4: Authentication Successful
+            
+            // Create local storage session "TID"
+            localStorage.setItem(AUTH_TOKEN_KEY, accountId);
+
+            // Step 5: Delete the temporary 'lgi' session
+            localStorage.removeItem(DATA_TOKEN_KEY);
+            // console.log("Login successful. 'lgi' token deleted, 'TID' token created.");
+
+            // Step 6: Redirect
+            showSuccessAndRedirect();
+        };
+
+        const showSuccessAndRedirect = () => {
+            // Provide visual feedback before redirecting
+            loginButton.textContent = 'Access Granted... Redirecting...';
+            loginButton.classList.remove('green-gradient-bg');
+            loginButton.classList.add('bg-green-600', 'hover:bg-green-700');
+            
+            // Redirect after a short delay
+            setTimeout(() => {
+                window.location.href = REDIRECT_PAGE;
+            }, 1000); // 1 second delay for visual confirmation
+        };
+
+        // --- Event Listener ---
+        loginForm.addEventListener('submit', handleLogin);
+    </script>
+
+</body>
+</html>

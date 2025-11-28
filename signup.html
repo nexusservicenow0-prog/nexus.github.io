@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Get an Account</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for the Fintech Theme (Black/Green) */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d0d0d; 
+            min-height: 100vh;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .signup-card {
+            background: #1a1a1a;
+            border: 1px solid #282828;
+            box-shadow: 0 0 40px rgba(0, 255, 128, 0.1);
+        }
+
+        .green-gradient-text {
+            background-image: linear-gradient(to right, #00FF80, #00C864);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
+        }
+        
+        /* Style the iframe container to ensure proper sizing */
+        .iframe-container {
+            width: 100%;
+            overflow: hidden;
+            border-radius: 12px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="signup-card w-full max-w-lg p-8 rounded-2xl">
+        
+        <div class="flex flex-col items-center mb-6">
+            <h1 class="text-4xl font-bold green-gradient-text">G E T &nbsp; A C C O U N T</h1>
+            <p class="text-sm text-gray-500 mt-1">Join the Nexus Platform</p>
+        </div>
+
+        <div id="view-form" class="space-y-6">
+            
+            <p class="text-gray-400 text-sm">Please fill out the form below to initiate your account setup. Your login details will be sent to your email address.</p>
+
+            <div class="iframe-container">
+                <iframe 
+                    id="signup-iframe"
+                    src="https://forms.gle/8QLwEJjzzZwV7YyV7" 
+                    width="100%" 
+                    height="700" 
+                    frameborder="0" 
+                    marginheight="0" 
+                    marginwidth="0"
+                    class="rounded-xl"
+                >
+                    Loading…
+                </iframe>
+                </div>
+            
+            <a href="login.html" class="block text-center text-sm text-gray-500 hover:text-green-400 transition">
+                Already have an account? Log In
+            </a>
+        </div>
+
+        <div id="view-success" class="hidden space-y-6 text-center p-8 bg-green-900/20 rounded-xl">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 mx-auto text-green-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+            <h2 class="text-3xl font-bold green-gradient-text">Registration Complete!</h2>
+            <p class="text-lg text-gray-300">Thank you for signing up.</p>
+            
+            <div class="card p-4 border-l-4 border-green-500">
+                <p class="text-sm font-medium text-gray-400">Important Information:</p>
+                <p class="text-white mt-2">Your **Account ID** and **Login Password** will be sent to your registered email address within the next **30 minutes**.</p>
+            </div>
+
+            <a href="login.html" class="inline-block mt-4 py-3 px-8 bg-green-600 text-white font-bold rounded-xl shadow-lg hover:bg-green-700 transition duration-300">
+                Go to Login Page
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // --- Configuration Constants ---
+        const SUCCESS_URL_FRAGMENT = 'formResponse'; // Google Form's standard success URL fragment
+
+        // --- DOM Elements ---
+        const signupIframe = document.getElementById('signup-iframe');
+        const viewForm = document.getElementById('view-form');
+        const viewSuccess = document.getElementById('view-success');
+
+        /**
+         * Checks the iframe's current location (only possible if the iframe is on the same domain, 
+         * but for Google Forms, we can use a small trick, or rely on manual navigation/a button 
+         * after submission, as we can't directly read cross-domain location change).
+         * * Since direct cross-origin detection is blocked by browsers, the most reliable
+         * method is to instruct the user to click a button after they see the "Your response has been recorded" 
+         * message in the iframe.
+         * * The solution implemented here uses a prompt for the user, as automatic detection is impossible.
+         */
+        const showSuccessView = () => {
+            viewForm.classList.add('hidden');
+            viewSuccess.classList.remove('hidden');
+        };
+
+        // --- Event Listener for Manual Confirmation ---
+        
+        // Since we can't directly detect Google Form submission from the parent window, 
+        // we add a prominent button/instruction for the user to click after they submit the form.
+
+        const checkSuccessInterval = setInterval(() => {
+            if (!document.getElementById('manual-confirm-btn')) {
+                // Find the iframe container to insert the manual confirmation button
+                const iframeContainer = signupIframe.parentElement;
+                
+                const confirmationDiv = document.createElement('div');
+                confirmationDiv.innerHTML = `
+                    <div class="mt-4 p-4 bg-blue-900/50 text-blue-300 rounded-xl text-center">
+                        <p class="font-bold mb-3">After submitting the form above:</p>
+                        <button id="manual-confirm-btn" class="py-2 px-6 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition">
+                            I have submitted the form
+                        </button>
+                    </div>
+                `;
+                iframeContainer.after(confirmationDiv);
+                
+                document.getElementById('manual-confirm-btn').addEventListener('click', () => {
+                    clearInterval(checkSuccessInterval);
+                    showSuccessView();
+                });
+            }
+        }, 1000); // Check every second to see if the button needs to be added
+
+    </script>
+
+</body>
+</html>

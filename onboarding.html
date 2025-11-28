@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Nexus</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for the Fintech Theme */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d0d0d;
+            min-height: 100vh;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden; /* Hide scrollbars, handled by JS */
+        }
+
+        .onboarding-container {
+            width: 100%;
+            max-width: 450px; /* Max width for a mobile-like card */
+            height: 100vh; /* Full viewport height for swiping */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem 1rem;
+            position: relative; /* For absolute positioning of navigation */
+        }
+
+        .carousel-wrapper {
+            display: flex;
+            width: 100%;
+            overflow: hidden;
+            scroll-behavior: smooth; /* Smooth scrolling between cards */
+            scroll-snap-type: x mandatory; /* Snap to cards */
+            -webkit-overflow-scrolling: touch; /* iOS smooth scrolling */
+            /* Hide scrollbar */
+            -ms-overflow-style: none; /* IE and Edge */
+            scrollbar-width: none; /* Firefox */
+        }
+
+        .carousel-wrapper::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera */
+        }
+
+        .onboarding-card {
+            flex: 0 0 100%; /* Each card takes full width of wrapper */
+            scroll-snap-align: start; /* Snap to the beginning of the card */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 1rem;
+            min-height: 80%; /* Ensure cards fill vertical space */
+        }
+
+        .card-image {
+            width: 250px;
+            height: 250px;
+            object-fit: contain; /* Ensure image fits well */
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            background-color: #1a1a1a; /* Placeholder background */
+            padding: 1rem;
+        }
+
+        .card-title {
+            font-size: 2.25rem; /* text-4xl */
+            font-weight: 700; /* font-bold */
+            margin-bottom: 1rem;
+            background-image: linear-gradient(to right, #00FF80, #00C864);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
+        }
+
+        .card-description {
+            font-size: 1rem; /* text-base */
+            color: #b0b0b0; /* Light gray */
+            line-height: 1.6;
+        }
+
+        .pagination-dots {
+            display: flex;
+            gap: 0.75rem; /* space-x-3 */
+            margin-top: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            background-color: #4a4a4a;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+
+        .dot.active {
+            background-color: #00FF80;
+        }
+
+        .skip-button {
+            background-color: transparent;
+            color: #b0b0b0;
+            font-weight: 500;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px; /* rounded-full */
+            transition: color 0.3s ease;
+        }
+
+        .skip-button:hover {
+            color: #e0e0e0;
+        }
+
+        .next-button {
+            background-image: linear-gradient(to right, #00FF80, #00C864);
+            color: #0d0d0d;
+            font-weight: 600;
+            padding: 0.75rem 2rem;
+            border-radius: 9999px; /* rounded-full */
+            transition: opacity 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 255, 128, 0.3);
+        }
+        .next-button:hover {
+            opacity: 0.9;
+            box-shadow: 0 6px 20px rgba(0, 255, 128, 0.5);
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 300px; /* To keep buttons nicely centered/spaced */
+            margin-top: auto; /* Push to bottom */
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="onboarding-container">
+        <div id="carousel-wrapper" class="carousel-wrapper">
+            <div class="onboarding-card">
+                <img src="/welcometonexus.jpg" alt="Welcome Image" class="card-image">
+                <h2 class="card-title">Welcome to Nexus!</h2>
+                <p class="card-description">Your secure portal for modern finance. We're excited to have you onboard.</p>
+            </div>
+            <div class="onboarding-card">
+                <img src="/manageyourfunds.jpg" alt="Manage Funds Image" class="card-image">
+                <h2 class="card-title">Manage Your Funds</h2>
+                <p class="card-description">Effortlessly deposit, withdraw, and track your balance with real-time updates.</p>
+            </div>
+            <div class="onboarding-card">
+                <img src="/refer.jpg" alt="Refer and Earn Image" class="card-image">
+                <h2 class="card-title">Refer & Earn Rewards</h2>
+                <p class="card-description">Invite friends to Nexus and earn exciting commissions for every successful referral.</p>
+            </div>
+            <div class="onboarding-card">
+                <img src="secure.jpg" alt="Secure Support Image" class="card-image">
+                <h2 class="card-title">Secure & Always On</h2>
+                <p class="card-description">Benefit from robust security and responsive support whenever you need assistance.</p>
+            </div>
+        </div>
+
+        <div id="pagination-dots" class="pagination-dots">
+            <div class="dot active"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+
+        <div class="button-group">
+            <button id="skip-button" class="skip-button">Skip</button>
+            <button id="next-button" class="next-button">Next</button>
+        </div>
+    </div>
+
+    <script>
+        const carouselWrapper = document.getElementById('carousel-wrapper');
+        const onboardingCards = document.querySelectorAll('.onboarding-card');
+        const paginationDots = document.getElementById('pagination-dots');
+        const skipButton = document.getElementById('skip-button');
+        const nextButton = document.getElementById('next-button');
+
+        let currentIndex = 0;
+        const totalCards = onboardingCards.length;
+
+        // --- Update UI ---
+        const updateCarousel = () => {
+            const offset = currentIndex * carouselWrapper.clientWidth;
+            carouselWrapper.scrollTo({ left: offset, behavior: 'smooth' });
+            updatePaginationDots();
+            updateButtonText();
+        };
+
+        const updatePaginationDots = () => {
+            const dots = paginationDots.children;
+            for (let i = 0; i < dots.length; i++) {
+                dots[i].classList.toggle('active', i === currentIndex);
+            }
+        };
+
+        const updateButtonText = () => {
+            if (currentIndex === totalCards - 1) {
+                nextButton.textContent = 'Get Started';
+            } else {
+                nextButton.textContent = 'Next';
+            }
+        };
+
+        // --- Navigation Logic ---
+
+        const goToNextCard = () => {
+            if (currentIndex < totalCards - 1) {
+                currentIndex++;
+                updateCarousel();
+            } else {
+                // Last card, go to dashboard
+                completeOnboarding();
+            }
+        };
+
+        const completeOnboarding = () => {
+            // In a real app, you might set a localStorage flag here:
+            // localStorage.setItem('onboarding_complete', 'true');
+            window.location.href = 'login.html'; // Or dashboard.html if user is already logged in
+        };
+
+        // --- Event Listeners ---
+
+        // Manual scroll event listener to update dots
+        carouselWrapper.addEventListener('scroll', () => {
+            const scrollLeft = carouselWrapper.scrollLeft;
+            const cardWidth = carouselWrapper.clientWidth;
+            // Determine current card by checking which card is mostly in view
+            const newIndex = Math.round(scrollLeft / cardWidth);
+            if (newIndex !== currentIndex) {
+                currentIndex = newIndex;
+                updatePaginationDots();
+                updateButtonText();
+            }
+        });
+
+        // Resize observer to re-center on card width changes (e.g., orientation change)
+        const resizeObserver = new ResizeObserver(() => {
+            updateCarousel(); // Recalculate and scroll to current card position
+        });
+        resizeObserver.observe(carouselWrapper);
+
+
+        skipButton.addEventListener('click', completeOnboarding);
+        nextButton.addEventListener('click', goToNextCard);
+
+        // --- Initial Load ---
+        updateCarousel(); // Set initial state
+    </script>
+
+</body>
+</html>

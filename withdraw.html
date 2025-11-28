@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Withdrawal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for the Fintech Theme (Black/Green) */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d0d0d; 
+            min-height: 100vh;
+            color: white;
+            padding-bottom: 5rem;
+        }
+
+        .header-bg {
+            background-color: #1a1a1a;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .card {
+            background: #1a1a1a;
+            border: 1px solid #282828;
+            border-radius: 16px;
+            box-shadow: 0 0 20px rgba(0, 255, 128, 0.05);
+        }
+
+        .green-gradient-text {
+            background-image: linear-gradient(to right, #00FF80, #00C864);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header-bg p-4 sticky top-0 z-10">
+        <div class="flex justify-between items-center max-w-4xl mx-auto">
+            <h1 class="text-2xl font-bold green-gradient-text">Withdrawal</h1>
+            <a href="dashboard.html" class="text-sm font-medium text-gray-400 hover:text-white transition duration-150">
+                Back to Dashboard
+            </a>
+        </div>
+    </header>
+
+    <main class="max-w-xl mx-auto p-4 space-y-8">
+        
+        <h2 class="text-3xl font-bold text-gray-100">Request Withdrawal</h2>
+
+        <div class="card p-4 border-l-4 border-yellow-500">
+            <h3 class="font-bold text-yellow-300 mb-2">Withdrawal Rules ⚠️</h3>
+            <ul class="list-disc list-inside text-sm text-gray-400 space-y-1">
+                <li>**Operational Hours:** Monday to Friday, 9:00 AM to 6:00 PM (Local Time).</li>
+                <li>**Minimum Withdrawal:** **$2.00 USD** (equivalent to ₦2720,000.00 NGN at the ₦1360/$1 rate).</li>
+                <li>Withdrawals initiated outside of these hours will be processed on the next business day.</li>
+            </ul>
+        </div>
+        
+        <div class="card p-6">
+            <h3 class="text-xl font-bold text-gray-200 mb-4">Withdrawal Request Form</h3>
+            <p class="text-sm text-gray-400 mb-4">Please fill out the secure form below to submit your withdrawal request. Ensure the amount meets the minimum requirement.</p>
+
+            <iframe 
+                src="https://forms.gle/n8rUfB85Yz65CXRw5" 
+                width="100%" 
+                height="800" 
+                frameborder="0" 
+                marginheight="0" 
+                marginwidth="0"
+                class="rounded-xl"
+            >
+                Loading…
+            </iframe>
+            <div id="processing-message" class="mt-6 p-4 bg-green-900/50 text-green-300 rounded-xl hidden">
+                 <p class="font-bold">Withdrawal Submitted!</p>
+                 <p class="text-sm">Since the form is external, please wait a moment for the form to confirm submission before going to the dashboard.</p>
+                 <a href="dashboard.html" class="inline-block mt-3 py-2 px-4 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition">Go to Dashboard</a>
+            </div>
+        </div>
+
+    </main>
+    
+    <script>
+        // NOTE: Since the form is external (Google Form), we cannot directly capture the submission event 
+        // to show a custom "Processing" screen. The user must navigate back manually or via a button
+        // after submitting the form inside the iframe.
+        
+        // This script remains mostly for the visual presentation and setting context.
+        
+        // --- Configuration Constants ---
+        const CONVERSION_RATE = 1360; // ₦1500 = $1 USD
+        const MIN_WITHDRAWAL_USD = 2.00;
+        
+        /**
+         * Checks if the current time is within operational hours and shows a warning if needed.
+         */
+        const checkOperationalTimeAndWarn = () => {
+            const now = new Date();
+            const day = now.getDay(); // Sunday is 0, Monday is 1...
+            const hour = now.getHours(); // 0-23
+            
+            // Operational hours: Monday (1) to Friday (5), 9 AM (9) to 6 PM (18)
+            const START_DAY = 1; 
+            const END_DAY = 5;   
+            const START_HOUR = 9;
+            const END_HOUR = 18;
+            
+            const isOpen = (day >= START_DAY && day <= END_DAY) && 
+                           (hour >= START_HOUR && hour < END_HOUR);
+            
+            if (!isOpen) {
+                const rulesCard = document.querySelector('.card.border-l-4.border-yellow-500');
+                if (rulesCard) {
+                    const timeNote = document.createElement('p');
+                    timeNote.className = 'mt-3 text-sm text-red-400 font-semibold';
+                    timeNote.textContent = "You are currently outside of operational hours (Mon-Fri, 9am-6pm). Your request will be processed on the next business day.";
+                    rulesCard.appendChild(timeNote);
+                }
+            }
+        };
+
+        window.onload = checkOperationalTimeAndWarn;
+
+        // Optionally, you could add logic here to unhide the processing message 
+        // if the user interacts with the iframe in a way that implies submission, 
+        // but true submission confirmation requires server-side integration.
+
+    </script>
+
+</body>
+</html>

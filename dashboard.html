@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for the Fintech Theme (Black/Green) */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d0d0d; 
+            min-height: 100vh;
+            color: white;
+            padding-bottom: 5rem; /* Space for the fixed bottom bar */
+        }
+
+        .header-bg {
+            background-color: #1a1a1a;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+        }
+
+        .card {
+            background: #1a1a1a;
+            border: 1px solid #282828;
+            border-radius: 16px;
+            box-shadow: 0 0 20px rgba(0, 255, 128, 0.05);
+        }
+
+        /* Define the green gradient */
+        .green-gradient-text {
+            background-image: linear-gradient(to right, #00FF80, #00C864);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
+        }
+
+        .green-gradient-bg {
+            background-image: linear-gradient(to right, #00FF80, #00C864);
+            transition: all 0.2s ease;
+        }
+        
+        .green-gradient-bg:hover {
+            opacity: 0.9;
+            box-shadow: 0 4px 15px rgba(0, 255, 128, 0.4);
+        }
+
+        /* Fixed bottom navigation bar for mobile feel */
+        .bottom-nav {
+            background-color: #1a1a1a;
+            box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Nav link styling */
+        .nav-link-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0.5rem 0.25rem;
+            color: #4b5563; /* Default gray */
+            transition: color 0.2s ease;
+        }
+        .nav-link-item:hover, .nav-link-item.active {
+            color: #00FF80; /* Green on hover/active */
+        }
+        .nav-link-item span {
+            font-size: 0.75rem; /* text-xs */
+            margin-top: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header-bg p-4 sticky top-0 z-10">
+        <div class="flex justify-between items-center max-w-4xl mx-auto">
+            <h1 class="text-2xl font-bold green-gradient-text">N E X U S</h1>
+            <button id="logout-button" class="text-sm font-medium text-red-400 hover:text-red-500 transition duration-150">
+                Logout
+            </button>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto p-4 space-y-8">
+        
+        <div class="pt-4">
+            <h2 class="text-2xl font-semibold text-gray-200">Welcome back, <span id="full-name" class="green-gradient-text">User</span>.</h2>
+            <p class="text-sm text-gray-500 mt-1">Account ID: <span id="account-id">Loading...</span></p>
+            <p id="last-updated" class="text-xs text-gray-600 mt-1">Last Updated: Just now</p>
+        </div>
+
+        <div class="card p-4 border-l-4 border-green-500">
+            <h3 class="font-bold text-green-300 mb-1 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a7 7 0 00-7 7v7h14v-7a7 7 0 00-7-7z"></path><path d="M12 22a2 2 0 002-2h-4a2 2 0 002 2z"></path></svg>
+                What is Nexus?
+            </h3>
+            <p class="text-sm text-gray-400">
+                Nexus is an **AI Forex Trading Bot**. We automate currency trades on your behalf and guarantee a **15% daily return** on your total balance, which is added directly to your withdrawable funds.
+            </p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            <div class="card p-6">
+                <p class="text-sm font-medium text-gray-400 mb-2 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2 text-green-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"></path></svg>
+                    Total Balance
+                </p>
+                <p id="main-balance" class="text-5xl font-extrabold green-gradient-text">
+                    $0.00
+                </p>
+            </div>
+
+            <div class="card p-6">
+                <p class="text-sm font-medium text-gray-400 mb-2 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2 text-yellow-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M16 8l-8 8M8 8l8 8"></path></svg>
+                    Available to Withdraw
+                </p>
+                <p id="withdrawable-balance" class="text-5xl font-extrabold text-yellow-300">
+                    $0.00
+                </p>
+            </div>
+            
+            <div class="card p-6 md:col-span-2">
+                <p class="text-sm font-medium text-green-400 mb-2 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2 text-green-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"></path><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"></path><path d="M16 3h2a2 2 0 012 2v14a2 2 0 01-2 2h-2"></path></svg>
+                    Daily Payout
+                </p>
+                <p id="daily-payout-amount" class="text-4xl font-extrabold text-white">
+                    $0.00
+                </p>
+                <p class="text-xs text-gray-500 mt-2">
+                    You will get **15%** of your balance added to your withdrawable balance every **24 hours**.
+                </p>
+            </div>
+            </div>
+        
+        <div class="grid grid-cols-2 gap-4 pt-4">
+            <a href="deposit.html" class="text-center py-4 rounded-xl green-gradient-bg text-gray-900 font-semibold shadow-lg hover:shadow-[#00FF80]/50 transition duration-300">
+                Deposit
+            </a>
+            <a href="withdraw.html" class="text-center py-4 rounded-xl bg-gray-700 text-white font-semibold hover:bg-gray-600 transition duration-300">
+                Withdraw
+            </a>
+        </div>
+
+        <div class="mt-8 text-center text-gray-600 p-6 card">
+            <img src="/nexuslogo.img.jpg" alt="Financial graphic placeholder" class="w-full h-auto rounded-xl opacity-70">
+        </div>
+        
+    </main>
+
+    <nav class="bottom-nav fixed bottom-0 left-0 right-0 p-2 w-full">
+        <div class="flex justify-around max-w-lg mx-auto text-xs font-medium">
+            
+            <a href="dashboard.html" class="nav-link-item active">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                <span>Home</span>
+            </a>
+
+            <a href="referral.html" class="nav-link-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+                <span>Referral</span>
+            </a>
+
+            <a href="contactus.html" class="nav-link-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                <span>Contact Us</span>
+            </a>
+        </div>
+    </nav>
+
+
+    <script>
+        // --- Configuration Constants ---
+        const USER_DATA_FILE = 'users.json';
+        const TOKEN_KEY = 'TID'; // Key for the Account ID
+        const BALANCE_KEY = 'bwb'; // Key for Balance/Withdrawable Balance/Daily Payout
+        const LOGIN_PAGE = 'login.html';
+        const REFRESH_INTERVAL_MS = 20000; // 20 seconds
+        const DAILY_RATE = 0.15; // 15% rate for daily payout
+
+        // Variable to hold the fetched user data
+        let USERS_DATABASE = []; 
+
+        // --- EXISTING FUNCTIONS (DO NOT CHANGE) ---
+
+        /**
+         * Formats a number as currency.
+         * @param {number} amount 
+         * @returns {string}
+         */
+        const formatCurrency = (amount) => {
+            // Ensure amount is a number before formatting
+            if (typeof amount !== 'number' || isNaN(amount)) {
+                amount = 0; 
+            }
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+            }).format(amount);
+        };
+
+        /**
+         * Loads user data from the JSON file.
+         * @returns {Promise<boolean>} Resolves to true if data was loaded successfully.
+         */
+        const fetchUserData = async () => {
+            try {
+                // Fetch the JSON file from the server
+                const response = await fetch(USER_DATA_FILE);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                USERS_DATABASE = await response.json();
+                // console.log("User data loaded from users.json");
+                return true;
+            } catch (error) {
+                console.error("Could not load user data from users.json. Ensure a web server is running and the file exists.", error);
+                return false;
+            }
+        };
+
+        /**
+         * Reads the 'bwb' local storage session and updates the display elements.
+         */
+        const updateDisplayFromLocalStorage = () => {
+            const bwbData = localStorage.getItem(BALANCE_KEY);
+
+            if (bwbData) {
+                try {
+                    const balances = JSON.parse(bwbData);
+                    document.getElementById('main-balance').textContent = formatCurrency(balances.balance);
+                    document.getElementById('withdrawable-balance').textContent = formatCurrency(balances.withdrawable_balance);
+                    // NEW: Update Daily Payout display
+                    document.getElementById('daily-payout-amount').textContent = formatCurrency(balances.daily_payout);
+                    
+                } catch (e) {
+                    console.error("Error parsing 'bwb' local storage data:", e);
+                }
+            }
+            // Update timestamp regardless of data success
+            document.getElementById('last-updated').textContent = "Last Updated: " + new Date().toLocaleTimeString();
+        };
+
+        /**
+         * Main function to load user data, update local storage, and update the display.
+         */
+        const loadDashboardData = async () => {
+            const accountId = localStorage.getItem(TOKEN_KEY); // Get account ID from "TID"
+
+            // Step 1: Authentication Check
+            if (!accountId) {
+                console.error("TID token missing. Redirecting to login.");
+                window.location.href = LOGIN_PAGE;
+                return;
+            }
+
+            // Step 2: Ensure the USERS_DATABASE is loaded
+            if (USERS_DATABASE.length === 0) {
+                 await fetchUserData();
+            }
+
+            // Step 3: Search for User Data
+            const user = USERS_DATABASE.find(u => u.account_id === accountId);
+
+            if (!user) {
+                console.error("User data not found for account ID:", accountId);
+                // Force logout if data is corrupt
+                localStorage.removeItem(TOKEN_KEY);
+                window.location.href = LOGIN_PAGE;
+                return;
+            }
+
+            // Step 4: Display static user info (only once)
+            const fullNameElement = document.getElementById('full-name');
+            const accountIdElement = document.getElementById('account-id');
+            if (fullNameElement.textContent === 'User') {
+                fullNameElement.textContent = user.full_name;
+                accountIdElement.textContent = user.account_id;
+            }
+
+            // Step 5 (MODIFIED): Calculate daily payout, then store all balance info
+            const balancesToStore = calculateDailyPayoutAndStore(user.balance, user.withdrawable_balance);
+            localStorage.setItem(BALANCE_KEY, JSON.stringify(balancesToStore));
+            
+            // Step 6: Update the display from the newly stored local storage data
+            updateDisplayFromLocalStorage();
+        };
+
+        /**
+         * Initializes the dashboard: loads the initial data and sets up the refresh interval.
+         */
+        const startAutoRefresh = () => {
+            // First, load existing data from 'bwb' local storage to show something immediately
+            updateDisplayFromLocalStorage();
+
+            // Then, load the dynamic data from the file and store/update 'bwb'
+            loadDashboardData();
+            
+            // Set up the interval to run the update logic every 20 seconds
+            if (REFRESH_INTERVAL_MS > 0) {
+                 setInterval(loadDashboardData, REFRESH_INTERVAL_MS);
+            }
+        };
+
+        /**
+         * Removes the token and redirects to login.
+         */
+        const logout = () => {
+            localStorage.removeItem(TOKEN_KEY);
+            localStorage.removeItem(BALANCE_KEY); // Clear balance data on logout
+            window.location.href = LOGIN_PAGE;
+        };
+
+        // --- NEW FUNCTION ADDED FOR DAILY PAYOUT CALCULATION ---
+
+        /**
+         * Calculates 15% of the total balance and returns the object to be stored.
+         * @param {number} totalBalance - The user's current total balance (main-balance).
+         * @param {number} withdrawableBalance - The user's current withdrawable balance.
+         * @returns {object} The complete balance object including the daily payout.
+         */
+        const calculateDailyPayoutAndStore = (totalBalance, withdrawableBalance) => {
+            const dailyPayoutAmount = totalBalance * DAILY_RATE;
+            
+            return {
+                balance: totalBalance,
+                withdrawable_balance: withdrawableBalance,
+                daily_payout: dailyPayoutAmount // Add the calculated value here
+            };
+        };
+
+        // --- Event Listeners ---
+        window.onload = startAutoRefresh;
+        document.getElementById('logout-button').addEventListener('click', logout);
+
+    </script>
+
+</body>
+</html>

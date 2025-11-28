@@ -1,0 +1,21 @@
+
+🌐 Nexus Dashboard Instructions
+dashboard.html
+Search for local storage session named "TID".
+
+Get the account ID in it.
+
+Get users.json it is in this format ([{"account_id": "090451","full_name": "Emma","email": "emmonblack931@gmail.com","password": "Rejudo123","balance": 150,"withdrawable_balance": 158,"referral_code_used": "333222","user_referral_code": "122345","active_plans": ["Basic"]},
+{"account_id": "123356","full_name": "Nunny","email": "dejamesmedia@gmail.com","password": "123456","balance": 2000,"withdrawable_balance": 10,"referral_code_used": "123456","user_referral_code": "123456","active_plans": [""]}])
+
+Search for entry in users.json that has the account ID.
+store balance and withdrawable balance value in a local storage session named "bwb" (this should be down every 20 seconds).
+
+display from bwb balance.
+display from bwb withdrawable balance.
+
+A deposit button that will lead to deposit.html.
+
+A withdraw button that will lead to withdraw.html.
+
+A bottom bar with a link to home, Referral, and a link to Contact Us.

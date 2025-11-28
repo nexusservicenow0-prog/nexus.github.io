@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Login</title>
+    <!-- Load Tailwind CSS for modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for the Fintech Theme */
+        body {
+            font-family: 'Inter', sans-serif;
+            /* Deep black background for a premium feel */
+            background-color: #0d0d0d; 
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .login-card {
+            background: #1a1a1a;
+            border: 1px solid #282828;
+            box-shadow: 0 0 40px rgba(0, 255, 128, 0.1);
+        }
+
+        /* Define the green gradient for the logo and buttons */
+        .green-gradient-text {
+            background-image: linear-gradient(to right, #00FF80, #00C864);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
+        }
+
+        .green-gradient-bg {
+            background-image: linear-gradient(to right, #00FF80, #00C864);
+            transition: all 0.3s ease;
+        }
+        
+        .green-gradient-bg:hover {
+            background-image: linear-gradient(to right, #00C864, #00FF80);
+        }
+
+        /* Simple SVG for the 'N' logo icon */
+        .nexus-logo-icon {
+            width: 50px;
+            height: 50px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Login Container -->
+    <div class="login-card w-full max-w-md p-8 rounded-2xl">
+        
+        <!-- Logo and Title -->
+        <div class="flex flex-col items-center mb-8">
+            <!-- Nexus Logo Icon (Simple Geometric SVG) -->
+            <svg class="nexus-logo-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M25 80 L50 20 L75 80 L50 40 Z" fill="url(#greenGradient)"/>
+                <defs>
+                    <linearGradient id="greenGradient" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#00FF80"/>
+                        <stop offset="1" stop-color="#00C864"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+            <h1 class="text-4xl font-bold green-gradient-text mt-3">N E X U S</h1>
+            <p class="text-sm text-gray-500 mt-1">Secure Account Access</p>
+        </div>
+
+        <!-- Login Form -->
+        <form id="login-form" class="space-y-6">
+            
+            <div>
+                <label for="accountId" class="block text-sm font-medium text-gray-400 mb-1">Account ID</label>
+                <input 
+                    type="text" 
+                    id="accountId" 
+                    placeholder="Enter Account ID"
+                    required 
+                    class="w-full px-4 py-3 bg-gray-700 text-white border border-gray-600 rounded-xl focus:border-[#00FF80] focus:ring focus:ring-[#00FF80] focus:ring-opacity-50 transition duration-150"
+                >
+            </div>
+            
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-400 mb-1">Password</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    placeholder="Enter password"
+                    required 
+                    class="w-full px-4 py-3 bg-gray-700 text-white border border-gray-600 rounded-xl focus:border-[#00FF80] focus:ring focus:ring-[#00FF80] focus:ring-opacity-50 transition duration-150"
+                >
+            </div>
+            
+            <button 
+                type="submit" 
+                class="w-full py-3 green-gradient-bg text-gray-900 font-semibold rounded-xl shadow-lg hover:shadow-[#00FF80]/50 transition duration-300"
+            >
+                Log In
+            </button>
+        </form>
+
+        <!-- Placeholder for Fintech image element (replaced with a styled placeholder) -->
+        <div class="mt-8 text-center text-gray-600">
+            <img src="https://placehold.co/400x100/1a1a1a/00FF80?text=Digital+Security+Network+(nexuslogo.img)" alt="Security graphic placeholder" class="w-full h-auto rounded-xl opacity-70">
+        </div>
+
+    </div>
+
+    <!-- Custom Alert/Modal (Hidden by default) -->
+    <div id="custom-alert" class="fixed inset-0 bg-black bg-opacity-75 hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-gray-800 p-6 rounded-xl w-full max-w-sm border-2 border-red-500 shadow-2xl shadow-red-900/50">
+            <h3 class="text-xl font-bold text-red-400 mb-3">Login Error</h3>
+            <p id="alert-message" class="text-gray-200 mb-6"></p>
+            <button onclick="closeAlert()" class="w-full py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition">
+                Dismiss
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // --- Mock Data (Simulating users.json) ---
+        // IMPORTANT: This data MUST be manually maintained in this file since external JSON fetching is not supported.
+        const USERS_DATABASE = [
+            {
+                "account_id": "090451",
+                "full_name": "Emma",
+                "email": "emmonblack931@gmail.com",
+                "password": "Rejudo123",
+                "balance": 0,
+                "withdrawable_balance": 0,
+                "referral_code_used": "333222",
+                "user_referral_code": "122345",
+                "active_plans": ["Basic"]
+            },
+            {
+                "account_id": "123356",
+                "full_name": "Nunny",
+                "email": "dejamesmedia@gmail.com",
+                "password": "123456",
+                "balance": 2000,
+                "withdrawable_balance": 150,
+                "referral_code_used": "123456",
+                "user_referral_code": "123456",
+                "active_plans": [""]
+            }
+        ];
+
+        // --- DOM Elements ---
+        const loginForm = document.getElementById('login-form');
+        const accountIdInput = document.getElementById('accountId');
+        const passwordInput = document.getElementById('password');
+        const customAlert = document.getElementById('custom-alert');
+        const alertMessage = document.getElementById('alert-message');
+
+        // --- Alert Functions (replaces alert() ) ---
+
+        const showAlert = (message) => {
+            alertMessage.textContent = message;
+            customAlert.classList.remove('hidden');
+        };
+
+        const closeAlert = () => {
+            customAlert.classList.add('hidden');
+        };
+
+        // Expose to window for inline click handler
+        window.closeAlert = closeAlert;
+
+        // --- Login Logic ---
+
+        const handleLogin = (event) => {
+            event.preventDefault();
+
+            const accountId = accountIdInput.value.trim();
+            const password = passwordInput.value;
+
+            // Step 1: Search for Account ID
+            const user = USERS_DATABASE.find(u => u.account_id === accountId);
+
+            if (!user) {
+                // Account ID not found
+                showAlert("Account not found. Kindly create an account.");
+                return;
+            }
+
+            // Step 2: Check Password
+            if (user.password !== password) {
+                // Password incorrect
+                showAlert("Password incorrect.");
+                return;
+            }
+
+            // Step 3: Authentication Successful
+            
+            // Create local storage session "TID"
+            localStorage.setItem("TID", accountId);
+
+            // Step 4: Redirect
+            showSuccessAndRedirect();
+        };
+
+        const showSuccessAndRedirect = () => {
+            // Provide visual feedback before redirecting
+            const loginButton = loginForm.querySelector('button[type="submit"]');
+            loginButton.textContent = 'Access Granted... Redirecting...';
+            loginButton.classList.remove('green-gradient-bg');
+            loginButton.classList.add('bg-green-600', 'hover:bg-green-700');
+            
+            // Redirect after a short delay
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1000); // 1 second delay for visual confirmation
+        };
+
+        // --- Event Listener ---
+        loginForm.addEventListener('submit', handleLogin);
+    </script>
+
+</body>
+</html>

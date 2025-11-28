@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local Storage Session Viewer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+            margin: 0;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 350px;
+            text-align: center;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        #sessionDisplay {
+            margin-bottom: 25px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #e9ecef;
+            font-size: 1.1em;
+            word-break: break-all;
+        }
+        .key-label {
+            font-weight: bold;
+            color: #555;
+            display: block;
+            margin-bottom: 5px;
+        }
+        #deleteButton {
+            padding: 10px 20px;
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        #deleteButton:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>🔒 Local Storage Session Management</h2>
+
+    <div id="sessionDisplay">
+        <span class="key-label">TID Value:</span>
+        <span id="tidValue"></span>
+    </div>
+
+    <button id="deleteButton">🗑️ Delete TID Session</button>
+</div>
+
+<script>
+    const tidValueElement = document.getElementById('tidValue');
+    const deleteButton = document.getElementById('deleteButton');
+    
+    /**
+     * Fetches the TID value from Local Storage and updates the display.
+     */
+    function displayTID() {
+        // 1. Get local storage session named "TID"
+        const tid = localStorage.getItem('TID');
+
+        // 2. Display it
+        if (tid) {
+            tidValueElement.textContent = tid;
+            deleteButton.disabled = false;
+        } else {
+            tidValueElement.textContent = 'No active TID session found.';
+            deleteButton.disabled = true; // Disable if nothing to delete
+        }
+    }
+
+    /**
+     * Deletes the TID session from Local Storage and updates the page.
+     */
+    function deleteTID() {
+        if (localStorage.getItem('TID')) {
+            // Remove the item from local storage
+            localStorage.removeItem('TID'); 
+            alert('TID session successfully deleted!');
+        } else {
+            alert('Error: No TID session to delete.');
+        }
+        // Update the display to show the change
+        displayTID();
+    }
+
+    // Attach the deletion function to the button click
+    deleteButton.addEventListener('click', deleteTID);
+
+    // Initial call to display the current status when the page loads
+    displayTID();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Authentication Gate</title>
+    <!-- Load Tailwind CSS for modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Modern Fintech Styling */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d0d0d; 
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            color: white;
+        }
+
+        .card {
+            background: #1a1a1a;
+            border: 1px solid #282828;
+            border-radius: 16px;
+            box-shadow: 0 0 40px rgba(0, 255, 128, 0.1);
+        }
+
+        .green-gradient-text {
+            background-image: linear-gradient(to right, #00FF80, #00C864);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card w-full max-w-lg p-8 text-center">
+        
+        <div id="content-container">
+            <!-- Initial state while JS runs -->
+            <svg class="w-16 h-16 mx-auto mb-4 text-indigo-400 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+            <h1 class="text-3xl font-bold text-gray-300 mb-2">Checking Session...</h1>
+            <p class="text-gray-500">Verifying authentication token in local storage.</p>
+        </div>
+
+    </div>
+
+    <script>
+        // Key for the local storage token
+        const TOKEN_KEY = 'TID';
+        const LOGIN_PAGE = 'login.html';
+        const DASHBOARD_PAGE = 'dashboard.html'; 
+
+        /**
+         * Checks for the TID token and handles redirection.
+         */
+        const checkAuthAndRoute = () => {
+            const token = localStorage.getItem(TOKEN_KEY);
+            const container = document.getElementById('content-container');
+
+            if (token) {
+                // Token found: Redirect to the dashboard
+                container.innerHTML = `
+                    <svg class="w-16 h-16 mx-auto mb-4 green-gradient-text" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <h1 class="text-3xl font-bold mb-2 green-gradient-text">Authentication Successful</h1>
+                    <p class="text-lg text-gray-300 mb-6">Redirecting to Dashboard...</p>
+                `;
+                // Redirect immediately
+                setTimeout(() => {
+                    window.location.href = DASHBOARD_PAGE;
+                }, 500); 
+            } else {
+                // Token not found: Redirect to login
+                container.innerHTML = `
+                    <svg class="w-16 h-16 mx-auto mb-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.332 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    <h1 class="text-3xl font-bold text-red-500 mb-2">Session Expired</h1>
+                    <p class="text-lg text-gray-300 mb-6">Redirecting to Login Page...</p>
+                `;
+                // Redirect after a slight delay
+                setTimeout(() => {
+                    window.location.href = LOGIN_PAGE;
+                }, 1500);
+            }
+        };
+
+        // Initialize the authentication check when the page loads
+        window.onload = checkAuthAndRoute;
+
+    </script>
+
+</body>
+</html>

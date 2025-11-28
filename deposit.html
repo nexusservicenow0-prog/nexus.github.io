@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Deposit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for the Fintech Theme (Black/Green) */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d0d0d; 
+            min-height: 100vh;
+            color: white;
+            padding-bottom: 5rem;
+        }
+
+        .header-bg {
+            background-color: #1a1a1a;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .card {
+            background: #1a1a1a;
+            border: 1px solid #282828;
+            border-radius: 16px;
+            box-shadow: 0 0 20px rgba(0, 255, 128, 0.05);
+        }
+
+        .green-gradient-text {
+            background-image: linear-gradient(to right, #00FF80, #00C864);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
+        }
+
+        .green-gradient-bg {
+            background-image: linear-gradient(to right, #00FF80, #00C864);
+            transition: all 0.2s ease;
+        }
+        
+        .green-gradient-bg:hover {
+            opacity: 0.9;
+            box-shadow: 0 4px 15px rgba(0, 255, 128, 0.4);
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header-bg p-4 sticky top-0 z-10">
+        <div class="flex justify-between items-center max-w-4xl mx-auto">
+            <h1 class="text-2xl font-bold green-gradient-text">Deposit</h1>
+            <a href="dashboard.html" class="text-sm font-medium text-gray-400 hover:text-white transition duration-150">
+                Back to Dashboard
+            </a>
+        </div>
+    </header>
+
+    <main class="max-w-xl mx-auto p-4 space-y-8">
+        
+        <div id="view-form" class="space-y-6">
+            <h2 class="text-3xl font-bold text-gray-100">Deposit Funds (NGN)</h2>
+
+            <div class="card p-6 space-y-4">
+                <p class="text-sm text-gray-500">Minimum Deposit: ₦3,000.00</p>
+                
+                <label for="depositAmount" class="block text-sm font-medium text-gray-400">Amount in Naira (₦)</label>
+                <input 
+                    type="number" 
+                    id="depositAmount" 
+                    placeholder="e.g., 3000"
+                    min="3000"
+                    required 
+                    class="w-full px-4 py-3 bg-gray-700 text-white border border-gray-600 rounded-xl text-3xl font-bold focus:border-[#00FF80] focus:ring-2 focus:ring-[#00FF80] focus:ring-opacity-50 transition duration-150"
+                >
+
+                <div class="card p-4 border-l-4 border-[#00FF80]">
+                    <p class="text-sm font-medium text-gray-400">You will receive:</p>
+                    <p id="usdReceive" class="text-2xl font-bold text-green-400">$0.00</p>
+                    <p class="text-xs text-gray-500 mt-1">Conversion Rate: ₦1,500 = $1 USD</p>
+                </div>
+            </div>
+
+            <button 
+                id="initiateDepositBtn"
+                class="w-full py-4 green-gradient-bg text-gray-900 font-bold rounded-xl shadow-lg transition duration-300"
+                disabled
+            >
+                Deposit
+            </button>
+        </div>
+
+        <div id="view-details" class="hidden space-y-6 text-center">
+            <h2 class="text-3xl font-bold green-gradient-text">Transfer to Bank</h2>
+            <p class="text-gray-400">Please make a transfer of exactly <span id="depositAmountDisplay" class="font-bold text-green-400"></span> to the account details below.</p>
+            <p class="text-red-400 text-sm font-semibold">Note: The account name must match your registered full name for automatic processing.</p>
+
+            <div class="card p-6 space-y-4 text-left">
+                <div class="flex justify-between items-center border-b border-gray-700 pb-2">
+                    <p class="text-gray-500">Bank Name</p>
+                    <p id="bankName" class="text-xl font-bold text-white">ACCESS BANK PLC</p>
+                </div>
+                <div class="flex justify-between items-center border-b border-gray-700 pb-2">
+                    <p class="text-gray-500">Account Number</p>
+                    <p id="accountNumber" class="text-xl font-bold text-white">0987654321</p>
+                    <button onclick="copyToClipboard('0987654321')" class="text-green-400 text-sm hover:text-green-300 ml-4">Copy</button>
+                </div>
+                <div class="flex justify-between items-center">
+                    <p class="text-gray-500">Account Name</p>
+                    <p id="accountName" class="text-xl font-bold text-white">Loading User Name...</p>
+                </div>
+            </div>
+            
+            <p class="text-sm text-gray-500 pt-4">Deposit will be processed as fast as possible depending on banking network(s).</p>
+
+            <button 
+                id="madeDepositBtn"
+                class="w-full py-4 bg-yellow-600 text-white font-bold rounded-xl shadow-lg hover:bg-yellow-700 transition duration-300"
+            >
+                I have made this deposit
+            </button>
+        </div>
+
+        <div id="view-processing" class="hidden space-y-6 text-center">
+            <svg class="mx-auto w-20 h-20 text-green-400 animate-spin" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 4V2M12 22V20M4 12H2M22 12H20M5.636 5.636L4.222 4.222M19.778 19.778L18.364 18.364M19.778 4.222L18.364 5.636M4.222 19.778L5.636 18.364" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <h2 class="text-3xl font-bold text-white">Deposit is Processing</h2>
+            <p class="text-gray-400">Your transaction has been submitted and is currently being verified. This typically takes a few minutes.</p>
+            <p class="text-sm text-gray-500">Thank you for your patience.</p>
+
+            <a href="dashboard.html"
+                class="inline-block mt-8 py-3 px-8 green-gradient-bg text-gray-900 font-bold rounded-xl shadow-lg transition duration-300"
+            >
+                Go to Dashboard
+            </a>
+        </div>
+
+    </main>
+
+    <script>
+        // --- Configuration Constants ---
+        const CONVERSION_RATE = 1500; // ₦1500 = $1 USD
+        const MIN_DEPOSIT_NAIRA = 3000;
+        const BANK_ACCOUNT = {
+            name: "ACCESS BANK PLC",
+            number: "0987654321"
+        };
+        const AUTH_TOKEN_KEY = 'TID';
+        const LOGIN_PAGE = 'login.html';
+        const USER_DATA_FILE = 'users.json';
+
+        // --- DOM Elements ---
+        const viewForm = document.getElementById('view-form');
+        const viewDetails = document.getElementById('view-details');
+        const viewProcessing = document.getElementById('view-processing');
+        const depositAmountInput = document.getElementById('depositAmount');
+        const usdReceive = document.getElementById('usdReceive');
+        const initiateDepositBtn = document.getElementById('initiateDepositBtn');
+        const madeDepositBtn = document.getElementById('madeDepositBtn');
+        const depositAmountDisplay = document.getElementById('depositAmountDisplay');
+        const accountNameDisplay = document.getElementById('accountName');
+        const bankNameDisplay = document.getElementById('bankName');
+        const accountNumberDisplay = document.getElementById('accountNumber');
+        
+        // --- State ---
+        let userFullName = "User Name"; // Placeholder until fetched
+
+        /**
+         * Formats a number as Naira currency.
+         * @param {number} amount 
+         * @returns {string}
+         */
+        const formatNaira = (amount) => {
+            return new Intl.NumberFormat('en-NG', {
+                style: 'currency',
+                currency: 'NGN',
+                minimumFractionDigits: 2,
+            }).format(amount);
+        };
+
+        /**
+         * Formats a number as USD currency.
+         * @param {number} amount 
+         * @returns {string}
+         */
+        const formatUSD = (amount) => {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+            }).format(amount);
+        };
+
+        /**
+         * Fetches user's full name from users.json using the TID token.
+         */
+        const loadUserName = async () => {
+            const accountId = localStorage.getItem(AUTH_TOKEN_KEY);
+            if (!accountId) {
+                window.location.href = LOGIN_PAGE;
+                return;
+            }
+
+            try {
+                const response = await fetch(USER_DATA_FILE);
+                const users = await response.json();
+                const user = users.find(u => u.account_id === accountId);
+                
+                if (user) {
+                    userFullName = user.full_name;
+                }
+            } catch (error) {
+                console.error("Could not load user data:", error);
+            }
+            // Update the display with the loaded or default name
+            accountNameDisplay.textContent = userFullName;
+        };
+        
+        /**
+         * Converts Naira to USD and updates the "You will receive" card.
+         */
+        const updateConversion = () => {
+            const nairaAmount = parseFloat(depositAmountInput.value);
+            
+            if (isNaN(nairaAmount) || nairaAmount < MIN_DEPOSIT_NAIRA) {
+                usdReceive.textContent = formatUSD(0);
+                initiateDepositBtn.disabled = true;
+                return;
+            }
+            
+            const usdAmount = nairaAmount / CONVERSION_RATE;
+            usdReceive.textContent = formatUSD(usdAmount);
+            initiateDepositBtn.disabled = false;
+        };
+
+        /**
+         * Switches the view to display the bank details.
+         */
+        const showBankDetails = () => {
+            const nairaAmount = parseFloat(depositAmountInput.value);
+            
+            if (isNaN(nairaAmount) || nairaAmount < MIN_DEPOSIT_NAIRA) {
+                alert(`Deposit failed: Minimum deposit is ${formatNaira(MIN_DEPOSIT_NAIRA)}.`);
+                return;
+            }
+
+            // Set up bank details view
+            depositAmountDisplay.textContent = formatNaira(nairaAmount);
+            bankNameDisplay.textContent = BANK_ACCOUNT.name;
+            accountNumberDisplay.textContent = BANK_ACCOUNT.number;
+            accountNameDisplay.textContent = userFullName; // Use the fetched name
+
+            // Switch views
+            viewForm.classList.add('hidden');
+            viewDetails.classList.remove('hidden');
+            viewProcessing.classList.add('hidden');
+        };
+
+        /**
+         * Switches the view to display the processing confirmation.
+         */
+        const showProcessing = () => {
+            // Switch views
+            viewForm.classList.add('hidden');
+            viewDetails.classList.add('hidden');
+            viewProcessing.classList.remove('hidden');
+        };
+
+        /**
+         * Copies text to the clipboard and provides feedback.
+         * @param {string} text The text to copy.
+         */
+        const copyToClipboard = (text) => {
+            navigator.clipboard.writeText(text).then(() => {
+                // Find the specific copy button for the account number
+                const copyButton = document.querySelector('#accountNumber + button');
+                const originalText = copyButton.textContent;
+                
+                copyButton.textContent = 'Copied!';
+                copyButton.classList.remove('text-green-400');
+                copyButton.classList.add('text-yellow-400');
+
+                setTimeout(() => {
+                    copyButton.textContent = originalText;
+                    copyButton.classList.remove('text-yellow-400');
+                    copyButton.classList.add('text-green-400');
+                }, 1500);
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+                alert('Copy failed. Please manually copy the account number.');
+            });
+        };
+
+        // Expose copy function globally for inline use
+        window.copyToClipboard = copyToClipboard;
+
+        // --- Event Listeners and Initialization ---
+
+        // Check login and load user name on page load
+        window.onload = loadUserName;
+
+        // Auto-convert when the user types
+        depositAmountInput.addEventListener('input', updateConversion);
+
+        // Initiate Deposit Button
+        initiateDepositBtn.addEventListener('click', showBankDetails);
+
+        // I have made this deposit Button
+        madeDepositBtn.addEventListener('click', showProcessing);
+
+    </script>
+
+</body>
+</html>

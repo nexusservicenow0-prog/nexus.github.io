@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>iFrame Webpage Viewer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .sidebar {
+            width: 200px;
+            background-color: #f4f4f4;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+        .sidebar a {
+            display: block;
+            padding: 10px 0;
+            text-decoration: none;
+            color: #333;
+            border-bottom: 1px solid #ddd;
+        }
+        .sidebar a:hover {
+            background-color: #e2e2e2;
+        }
+        .content {
+            flex-grow: 1;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none; /* Removes the default border around the iframe */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="sidebar">
+            <h3>Webpages</h3>
+            <a href="https://nexusservicenow0-prog.github.io/nexus.github.io/admin.html" target="contentFrame">dashboard </a>
+            <a href="https://github.com/nexusservicenow0-prog/nexus.github.io" target="contentFrame">github</a>
+            <a href="https://www.gutenberg.org/" target="contentFrame">Project Gutenberg</a>
+            <a href="https://example.com" target="contentFrame">Example Domain</a>
+
+            </div>
+
+        <div class="content">
+            <iframe name="contentFrame" src="https://example.com" title="External Webpage Content Viewer"></iframe>
+        </div>
+    </div>
+
+</body>
+</html>

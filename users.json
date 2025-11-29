@@ -1,25 +1,25 @@
 [
   {
-    "account_id": "090451",
-    "full_name": "Emma",
+    "account_id": "09045183515",
+    "full_name": "Emmanuel Onyedikachukwu James",
     "email": "emmonblack931@gmail.com",
     "password": "Rejudo123",
-    "balance": 0,
-    "withdrawable_balance": 7,
+    "balance": 27,
+    "withdrawable_balance": 2.5,
     "referral_code_used": "333222",
-    "user_referral_code": "122345",
+    "user_referral_code": "126345",
     "active_plans": [
       "Basic"
     ]
   },
   {
-    "account_id": "090456",
+    "account_id": "09129026317",
     "full_name": "onyebuchi solomon",
     "email": "solomon931@gmail.com",
     "password": "Rejudo123",
     "balance": 100,
     "withdrawable_balance": 7,
-    "referral_code_used": "333222",
+    "referral_code_used": "126345",
     "user_referral_code": "122345",
     "active_plans": [
       "Basic"

@@ -81,6 +81,7 @@
                 </p>
                 
                 <div class="bg-gray-800 p-4 rounded-lg flex flex-col sm:flex-row justify-between items-center mb-4">
+                    <!-- Keeping original Mini Pay number as it appears to be a mobile number with prefix -->
                     <span class="text-lg font-mono text-white select-all mini-pay-number">2347070735202</span>
                     <a 
                         href="https://t.me/Nexuscutomerservicebot" 
@@ -135,12 +136,15 @@
             <div class="card p-6 space-y-4 text-left">
                 <div class="flex justify-between items-center border-b border-gray-700 pb-2">
                     <p class="text-gray-500">Bank Name</p>
-                    <p id="bankName" class="text-xl font-bold text-white"> MOMO BANK PLC</p>
+                    <!-- UPDATED: Display field is set here, but JS will override it with the correct constant -->
+                    <p id="bankName" class="text-xl font-bold text-white">MOMO BANK</p>
                 </div>
                 <div class="flex justify-between items-center border-b border-gray-700 pb-2">
                     <p class="text-gray-500">Account Number</p>
-                    <p id="accountNumber" class="text-xl font-bold text-white">707 073 5202</p>
-                    <button onclick="copyToClipboard('707 073 5202')" class="text-green-400 text-sm hover:text-green-300 ml-4">Copy</button>
+                    <!-- UPDATED: Display field is set here, but JS will override it with the correct constant -->
+                    <p id="accountNumber" class="text-xl font-bold text-white">7070735202</p>
+                    <!-- UPDATED: Copy function argument updated -->
+                    <button onclick="copyToClipboard('7070735202')" class="text-green-400 text-sm hover:text-green-300 ml-4">Copy</button>
                 </div>
                 <div class="flex justify-between items-center">
                     <p class="text-gray-500">Account Name</p>
@@ -177,10 +181,13 @@
         // --- Configuration Constants ---
         const CONVERSION_RATE = 1500; // ₦1500 = $1 USD
         const MIN_DEPOSIT_NAIRA = 3000;
+        
+        // --- UPDATED BANK ACCOUNT DETAILS ---
         const BANK_ACCOUNT = {
-            name: "ACCESS BANK PLC",
-            number: "0987654321"
+            name: "MOMO BANK",
+            number: "7070735202"
         };
+        
         const AUTH_TOKEN_KEY = 'TID';
         const LOGIN_PAGE = 'login.html';
         const USER_DATA_FILE = 'users.json';
@@ -233,13 +240,18 @@
         const loadUserName = async () => {
             const accountId = localStorage.getItem(AUTH_TOKEN_KEY);
             if (!accountId) {
-                window.location.href = LOGIN_PAGE;
+                // Do not redirect immediately, wait for window.onload if this is called elsewhere
+                console.log("No account ID found.");
                 return;
             }
 
             try {
+                // Fetch the mock user database
                 const response = await fetch(USER_DATA_FILE);
+                if (!response.ok) throw new Error("User data file not found.");
                 const users = await response.json();
+                
+                // Find the current user
                 const user = users.find(u => u.account_id === accountId);
                 
                 if (user) {
@@ -276,15 +288,18 @@
             const nairaAmount = parseFloat(depositAmountInput.value);
             
             if (isNaN(nairaAmount) || nairaAmount < MIN_DEPOSIT_NAIRA) {
-                alert(`Deposit failed: Minimum deposit is ${formatNaira(MIN_DEPOSIT_NAIRA)}.`);
+                // Using console.error instead of alert as per instructions
+                console.error(`Deposit failed: Minimum deposit is ${formatNaira(MIN_DEPOSIT_NAIRA)}.`);
                 return;
             }
 
-            // Set up bank details view
+            // Set up bank details view using the updated constant
             depositAmountDisplay.textContent = formatNaira(nairaAmount);
             bankNameDisplay.textContent = BANK_ACCOUNT.name;
             accountNumberDisplay.textContent = BANK_ACCOUNT.number;
-            accountNameDisplay.textContent = userFullName; // Use the fetched name
+            // Also ensure the copy button is updated with the new number
+            document.querySelector('#accountNumber + button').setAttribute('onclick', `copyToClipboard('${BANK_ACCOUNT.number}')`);
+
 
             // Switch views
             document.getElementById('deposit-container').classList.add('hidden');
@@ -307,23 +322,27 @@
          * @param {string} text The text to copy.
          */
         const copyToClipboard = (text) => {
+            // Note: This function uses a modern API that might be restricted in some iframe environments.
+            // If copying fails, we'll log an error.
             navigator.clipboard.writeText(text).then(() => {
-                // Find the specific copy button for the account number
                 const copyButton = document.querySelector('#accountNumber + button');
                 const originalText = copyButton.textContent;
                 
                 copyButton.textContent = 'Copied!';
-                copyButton.classList.remove('text-green-400');
+                copyButton.classList.remove('text-green-400', 'hover:text-green-300');
                 copyButton.classList.add('text-yellow-400');
 
                 setTimeout(() => {
-                    copyButton.textContent = originalText;
+                    copyButton.textContent = 'Copy';
                     copyButton.classList.remove('text-yellow-400');
-                    copyButton.classList.add('text-green-400');
+                    copyButton.classList.add('text-green-400', 'hover:text-green-300');
                 }, 1500);
             }).catch(err => {
                 console.error('Failed to copy text: ', err);
-                alert('Copy failed. Please manually copy the account number.');
+                // Fallback UI indication
+                const copyButton = document.querySelector('#accountNumber + button');
+                copyButton.textContent = 'Copy Failed';
+                setTimeout(() => { copyButton.textContent = 'Copy'; }, 2000);
             });
         };
 

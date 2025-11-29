@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin User Management Panel</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar for better look */
+        .styled-scroll::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .styled-scroll::-webkit-scrollbar-thumb {
+            background-color: #9ca3af; /* gray-400 */
+            border-radius: 4px;
+        }
+
+        .styled-scroll::-webkit-scrollbar-track {
+            background-color: #f3f4f6; /* gray-100 */
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans p-4 sm:p-8">
+
+    <div class="max-w-7xl mx-auto bg-white shadow-xl rounded-xl p-4 sm:p-8">
+        <header class="mb-6 border-b pb-4">
+            <h1 class="text-3xl font-extrabold text-gray-800">User Data Administration</h1>
+            <p class="text-sm text-gray-500">Manage user accounts, balances, and plans. Data is loaded from the local session "trx" or fetched from <code>users.json</code>.</p>
+        </header>
+
+        <!-- Control Panel: Search & Buttons -->
+        <div class="flex flex-col sm:flex-row gap-4 mb-6">
+            <input
+                type="text"
+                id="search-input"
+                oninput="handleSearch()"
+                placeholder="Search by ID, Name, or Email..."
+                class="flex-grow p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition duration-150"
+            >
+            <div class="flex flex-row gap-3 flex-wrap">
+                <button
+                    onclick="openEditModal(null)"
+                    class="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-200 whitespace-nowrap"
+                >
+                    + Add New User
+                </button>
+                <button
+                    onclick="copyDataToClipboard()"
+                    class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-200 whitespace-nowrap"
+                >
+                    Copy All Data
+                </button>
+                <button
+                    onclick="openRefreshConfirmModal()"
+                    class="bg-red-500 hover:bg-red-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-200 whitespace-nowrap"
+                >
+                    Fetch/Refresh Data
+                </button>
+            </div>
+        </div>
+
+        <!-- Notification Message -->
+        <div id="notification" class="hidden p-3 mb-4 text-sm rounded-lg" role="alert"></div>
+
+        <!-- User Table -->
+        <div class="overflow-x-auto rounded-lg shadow-lg styled-scroll">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-100 sticky top-0">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Account ID</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Full Name</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Balance</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Withdrawable</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Plans</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="user-table-body" class="bg-white divide-y divide-gray-200">
+                    <!-- User rows will be inserted here by JavaScript -->
+                </tbody>
+            </table>
+            <div id="no-results" class="hidden p-6 text-center text-gray-500 bg-white">No users found matching your search criteria.</div>
+        </div>
+    </div>
+
+    <!-- Edit/Add User Modal -->
+    <div id="user-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 hidden items-center justify-center p-4 z-50 transition-opacity duration-300">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden transform scale-95 transition-transform duration-300">
+            <div class="p-6 border-b">
+                <h2 id="modal-title" class="text-2xl font-bold text-gray-800">Add New User</h2>
+            </div>
+            <form id="user-form" class="p-6 space-y-4">
+                <input type="hidden" id="form-account-id">
+
+                <!-- Account ID (Readonly for Edit) -->
+                <div>
+                    <label for="form-account-id-display" class="block text-sm font-medium text-gray-700">Account ID</label>
+                    <input type="text" id="form-account-id-display" readonly class="mt-1 block w-full p-3 border border-gray-300 bg-gray-100 rounded-lg cursor-not-allowed">
+                </div>
+
+                <!-- Full Name -->
+                <div>
+                    <label for="form-full-name" class="block text-sm font-medium text-gray-700">Full Name</label>
+                    <input type="text" id="form-full-name" required class="mt-1 block w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+
+                <!-- Email -->
+                <div>
+                    <label for="form-email" class="block text-sm font-medium text-gray-700">Email</label>
+                    <input type="email" id="form-email" required class="mt-1 block w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+
+                <!-- Password -->
+                <div>
+                    <label for="form-password" class="block text-sm font-medium text-gray-700">Password</label>
+                    <input type="text" id="form-password" required class="mt-1 block w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+
+                <!-- Balances -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="form-balance" class="block text-sm font-medium text-gray-700">Balance ($)</label>
+                        <input type="number" id="form-balance" step="0.01" required class="mt-1 block w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label for="form-withdrawable" class="block text-sm font-medium text-gray-700">Withdrawable Balance ($)</label>
+                        <input type="number" id="form-withdrawable" step="0.01" required class="mt-1 block w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                </div>
+
+                <!-- Referral Codes -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="form-referral-used" class="block text-sm font-medium text-gray-700">Referral Code Used</label>
+                        <input type="text" id="form-referral-used" class="mt-1 block w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label for="form-user-referral-code" class="block text-sm font-medium text-gray-700">User Referral Code</label>
+                        <input type="text" id="form-user-referral-code" required class="mt-1 block w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                </div>
+
+                <!-- Active Plans -->
+                <div>
+                    <label for="form-active-plans" class="block text-sm font-medium text-gray-700">Active Plans (Comma Separated)</label>
+                    <input type="text" id="form-active-plans" class="mt-1 block w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., Basic, Premium">
+                </div>
+
+                <!-- Modal Actions -->
+                <div class="flex justify-end pt-4 space-x-3">
+                    <button type="button" onclick="closeModal('user-modal')" class="px-4 py-2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-lg font-medium transition duration-150">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold shadow-md transition duration-150">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Custom Refresh Confirmation Modal -->
+    <div id="refresh-confirm-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 hidden items-center justify-center p-4 z-50 transition-opacity duration-300">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm overflow-hidden transform scale-95 transition-transform duration-300">
+            <div class="p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Confirm Data Fetch/Reset</h3>
+                <p class="text-gray-600 mb-6">Are you sure you want to clear the local cache and try to fetch new data from <code>users.json</code>?</p>
+                <div class="flex justify-end space-x-3">
+                    <button type="button" onclick="closeModal('refresh-confirm-modal')" class="px-4 py-2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-lg font-medium transition duration-150">
+                        Cancel
+                    </button>
+                    <button type="button" onclick="refreshData()" class="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold shadow-md transition duration-150">
+                        Fetch & Reset
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // Use a global variable to hold the user data
+        let userData = [];
+        let isEditing = false;
+        let originalAccountId = null;
+        
+        // --- Network and Data Fetching ---
+
+        /**
+         * Attempts to fetch user data from the live server via 'users.json'.
+         * If fetching fails (e.g., file not found, network error), it returns a predefined minimal dataset
+         * to prevent the application from crashing.
+         * @returns {Array} Parsed user data array.
+         */
+        async function fetchUsersData() {
+            try {
+                // IMPORTANT: This relies on 'users.json' being accessible from the server's root.
+                const response = await fetch('users.json');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                showNotification("Successfully fetched new data from users.json.", 'success');
+                return data;
+
+            } catch (error) {
+                console.error("Error fetching users.json:", error.message);
+                showNotification(`Warning: Could not fetch users.json. Loading fallback data. (${error.message.substring(0, 50)}...)`, 'error');
+                
+                // Fallback/Sample data structure
+                return [
+                    {"account_id": "999001","full_name": "Fallback User 1","email": "fallback1@example.com","password": "secure1","balance": 500,"withdrawable_balance": 50,"referral_code_used": "","user_referral_code": "FALL1","active_plans": ["Test"]},
+                    {"account_id": "999002","full_name": "Fallback User 2","email": "fallback2@example.com","password": "secure2","balance": 1200,"withdrawable_balance": 100,"referral_code_used": "FALL1","user_referral_code": "FALL2","active_plans": ["Premium", "Test"]}
+                ];
+            }
+        }
+
+
+        // --- Data Persistence and Initialization ---
+
+        /**
+         * Saves the current userData array to localStorage under key 'trx'.
+         */
+        function saveToLocalStorage() {
+            try {
+                localStorage.setItem('trx', JSON.stringify(userData));
+            } catch (error) {
+                console.error("Error saving data to localStorage:", error);
+                showNotification("Could not save data to local storage.", 'error');
+            }
+        }
+
+        /**
+         * Initializes or loads data from localStorage, falling back to network fetch if necessary.
+         * @param {boolean} forceRefresh - If true, skips localStorage cache and loads data from network fetch.
+         */
+        async function loadData(forceRefresh = false) {
+            const storedData = localStorage.getItem('trx');
+
+            if (forceRefresh) {
+                // Clear existing local cache and fetch from server
+                userData = await fetchUsersData();
+                saveToLocalStorage();
+            } else if (storedData) {
+                // Load from localStorage cache
+                try {
+                    userData = JSON.parse(storedData);
+                    showNotification("User data loaded from local session 'trx' cache.", 'success');
+                } catch (e) {
+                    console.error("Error parsing stored data. Attempting network fetch...", e);
+                    // If cache is corrupted, try network fetch
+                    userData = await fetchUsersData();
+                    saveToLocalStorage();
+                }
+            } else {
+                // No local data, fetch from network
+                userData = await fetchUsersData();
+                saveToLocalStorage();
+            }
+
+            renderTable(userData);
+        }
+        
+        /**
+         * Clears the cache and triggers a new fetch from the server.
+         */
+        function refreshData() {
+            closeModal('refresh-confirm-modal');
+            loadData(true); // Force load from network
+            document.getElementById('search-input').value = ''; // Clear search
+            handleSearch(); 
+        }
+
+
+        // --- Rendering and Display ---
+
+        /**
+         * Renders the user data in the table, filtered by the search term.
+         * @param {Array} data - The array of user objects to render.
+         */
+        function renderTable(data) {
+            const tableBody = document.getElementById('user-table-body');
+            const noResults = document.getElementById('no-results');
+            tableBody.innerHTML = ''; // Clear existing rows
+
+            if (!data || data.length === 0) {
+                noResults.classList.remove('hidden');
+                return;
+            }
+            noResults.classList.add('hidden');
+
+            data.forEach(user => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-indigo-50 transition duration-150';
+                
+                // Plans formatting: ensure active_plans is an array and join it.
+                const plansText = Array.isArray(user.active_plans) && user.active_plans.length > 0
+                    ? user.active_plans.join(', ')
+                    : 'None';
+                
+                // Helper for number formatting
+                const formatCurrency = (value) => `$${parseFloat(value).toFixed(2)}`;
+
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${user.account_id}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${user.full_name}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${user.email}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-700">${formatCurrency(user.balance)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-700">${formatCurrency(user.withdrawable_balance)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${plansText}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button onclick="openEditModal('${user.account_id}')" class="text-indigo-600 hover:text-indigo-900 font-medium transition duration-150">
+                            Edit
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // --- Search Functionality ---
+
+        /**
+         * Filters the userData based on the input field and re-renders the table.
+         */
+        function handleSearch() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase().trim();
+
+            if (!searchTerm) {
+                renderTable(userData);
+                return;
+            }
+
+            const filteredData = userData.filter(user => {
+                const searchFields = [
+                    user.account_id,
+                    user.full_name,
+                    user.email,
+                    user.user_referral_code,
+                    user.referral_code_used
+                ].join(' ').toLowerCase();
+
+                return searchFields.includes(searchTerm);
+            });
+
+            renderTable(filteredData);
+        }
+
+        // --- Modal Control ---
+
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.remove('hidden');
+            document.getElementById(modalId).classList.add('flex');
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            
+            // Only reset form fields for the main user modal
+            if (modalId === 'user-modal') {
+                document.getElementById('user-form').reset();
+                isEditing = false;
+                originalAccountId = null;
+            }
+        }
+        
+        function openRefreshConfirmModal() {
+             openModal('refresh-confirm-modal');
+        }
+
+
+        // --- Edit/Add User Logic ---
+
+        /**
+         * Opens the modal for editing an existing user or adding a new one.
+         * @param {string | null} accountId - The ID of the user to edit, or null to add a new user.
+         */
+        function openEditModal(accountId) {
+            const modalTitle = document.getElementById('modal-title');
+            const accountIdDisplay = document.getElementById('form-account-id-display');
+            const formAccountIdHidden = document.getElementById('form-account-id');
+
+            if (accountId) {
+                // Editing existing user
+                isEditing = true;
+                originalAccountId = accountId;
+                modalTitle.textContent = `Edit User: ${accountId}`;
+                accountIdDisplay.value = accountId;
+                formAccountIdHidden.value = accountId;
+                accountIdDisplay.setAttribute('readonly', 'true');
+                accountIdDisplay.classList.add('bg-gray-100', 'cursor-not-allowed');
+
+                const user = userData.find(u => u.account_id === accountId);
+                if (user) {
+                    document.getElementById('form-full-name').value = user.full_name || '';
+                    document.getElementById('form-email').value = user.email || '';
+                    document.getElementById('form-password').value = user.password || '';
+                    document.getElementById('form-balance').value = user.balance !== undefined ? user.balance : 0;
+                    document.getElementById('form-withdrawable').value = user.withdrawable_balance !== undefined ? user.withdrawable_balance : 0;
+                    document.getElementById('form-referral-used').value = user.referral_code_used || '';
+                    document.getElementById('form-user-referral-code').value = user.user_referral_code || '';
+                    document.getElementById('form-active-plans').value = (Array.isArray(user.active_plans) ? user.active_plans.join(', ') : user.active_plans || '');
+                }
+            } else {
+                // Adding new user
+                isEditing = false;
+                modalTitle.textContent = 'Add New User';
+                const newId = generateUniqueAccountId();
+                accountIdDisplay.value = newId;
+                formAccountIdHidden.value = newId;
+                accountIdDisplay.removeAttribute('readonly');
+                accountIdDisplay.classList.remove('bg-gray-100', 'cursor-not-allowed');
+            }
+
+            openModal('user-modal');
+        }
+
+        /**
+         * Handles form submission to save user data (new or edited).
+         */
+        document.getElementById('user-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            // Collect data from the form
+            const formData = {
+                account_id: document.getElementById('form-account-id-display').value,
+                full_name: document.getElementById('form-full-name').value,
+                email: document.getElementById('form-email').value,
+                password: document.getElementById('form-password').value,
+                balance: parseFloat(document.getElementById('form-balance').value) || 0,
+                withdrawable_balance: parseFloat(document.getElementById('form-withdrawable').value) || 0,
+                referral_code_used: document.getElementById('form-referral-used').value,
+                user_referral_code: document.getElementById('form-user-referral-code').value,
+                // Convert comma-separated string back to array
+                active_plans: document.getElementById('form-active-plans').value
+                    .split(',')
+                    .map(s => s.trim())
+                    .filter(s => s.length > 0)
+            };
+
+            if (isEditing) {
+                // Find index of the user being edited using the originalAccountId
+                const index = userData.findIndex(u => u.account_id === originalAccountId);
+                if (index !== -1) {
+                    // Update the existing user object
+                    userData[index] = { ...userData[index], ...formData };
+                    showNotification(`User ${formData.account_id} updated successfully.`, 'success');
+                }
+            } else {
+                // Adding a new user
+                // For new users, we allow the account_id to be changed in the form, but validate uniqueness
+                if (userData.some(u => u.account_id === formData.account_id)) {
+                    showNotification(`Account ID ${formData.account_id} already exists. Please choose a different one.`, 'error');
+                    return;
+                }
+                userData.push(formData);
+                showNotification(`New user ${formData.account_id} added successfully.`, 'success');
+            }
+
+            // Save, refresh table, and close modal
+            saveToLocalStorage();
+            renderTable(userData);
+            closeModal('user-modal');
+            handleSearch(); // Ensure search filter is applied if active
+        });
+
+
+        // --- Utility Functions ---
+
+        /**
+         * Shows a temporary notification message.
+         * @param {string} message - The message to display.
+         * @param {string} type - 'success', 'error', or 'warning'.
+         */
+        function showNotification(message, type = 'success') {
+            const notificationEl = document.getElementById('notification');
+            notificationEl.textContent = message;
+            notificationEl.classList.remove('hidden', 'bg-red-100', 'text-red-800', 'bg-green-100', 'text-green-800', 'bg-yellow-100', 'text-yellow-800');
+
+            if (type === 'success') {
+                notificationEl.classList.add('bg-green-100', 'text-green-800');
+            } else if (type === 'error') {
+                notificationEl.classList.add('bg-red-100', 'text-red-800');
+            } else {
+                 notificationEl.classList.add('bg-yellow-100', 'text-yellow-800');
+            }
+
+            setTimeout(() => {
+                notificationEl.classList.add('hidden');
+            }, 5000); // Extended visibility for fetch errors
+        }
+        
+        /**
+         * Generates a simple, unique 6-digit ID for new users.
+         * @returns {string} A unique 6-digit account ID.
+         */
+        function generateUniqueAccountId() {
+            let newId;
+            do {
+                newId = Math.floor(100000 + Math.random() * 900000).toString();
+            } while (userData.some(u => u.account_id === newId));
+            return newId;
+        }
+
+        /**
+         * Copies the entire current user data as JSON to the clipboard.
+         */
+        function copyDataToClipboard() {
+            const dataToCopy = JSON.stringify(userData, null, 2); // 2 spaces indentation for readability
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                // Use modern Clipboard API
+                navigator.clipboard.writeText(dataToCopy)
+                    .then(() => {
+                        showNotification('All user data (JSON) copied to clipboard!', 'success');
+                    })
+                    .catch(err => {
+                        console.error('Could not copy text: ', err);
+                        fallbackCopyTextToClipboard(dataToCopy);
+                    });
+            } else {
+                // Fallback for older browsers or restricted environments (like Canvas iFrames)
+                fallbackCopyTextToClipboard(dataToCopy);
+            }
+        }
+
+        // Fallback for document.execCommand('copy') as requested in instructions
+        function fallbackCopyTextToClipboard(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            // Avoid scrolling to bottom
+            textArea.style.position = "fixed";
+            textArea.style.top = "0";
+            textArea.style.left = "0";
+            textArea.style.opacity = "0"; // Hide the textarea
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showNotification('All user data (JSON) copied to clipboard!', 'success');
+                } else {
+                    showNotification('Failed to copy. Please manually copy the data from the console.', 'error');
+                    console.log('User Data:', text);
+                }
+            } catch (err) {
+                console.error('Fallback: Oops, unable to copy', err);
+                showNotification('Copying failed (browser restriction). See console for data.', 'error');
+                console.log('User Data:', text);
+            }
+            document.body.removeChild(textArea);
+        }
+
+        // --- Initialization on Load ---
+
+        // Load data on window load. It will check local storage first, and if empty, fetch from users.json.
+        window.onload = loadData;
+    </script>
+</body>
+</html>

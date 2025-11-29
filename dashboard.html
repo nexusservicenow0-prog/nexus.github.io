@@ -68,10 +68,41 @@
             font-size: 0.75rem; /* text-xs */
             margin-top: 0.25rem;
         }
+        
+        /* Custom Badge Styles */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.6rem;
+            border-radius: 9999px; /* rounded-full */
+            font-size: 0.75rem; /* text-xs */
+            font-weight: 700; /* font-bold */
+            margin-left: 0.75rem;
+            text-transform: uppercase;
+        }
+        .badge-earth { background-color: #38a169; color: #f0fff4; } /* Green/Earth tones */
+        .badge-silver { background-color: #a0aec0; color: #2d3748; } /* Silver/Gray tones */
+        .badge-gold { background-color: #ecc94b; color: #4a5568; } /* Gold/Yellow tones */
+        .badge-diamond { background-color: #63b3ed; color: #1a202c; } /* Diamond/Blue tones */
+
     </style>
 </head>
 <body>
-
+    
+    <div id="custom-alert-zero-balance" class="fixed inset-0 bg-black bg-opacity-80 hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-gray-800 p-6 rounded-xl w-full max-w-sm border-2 border-red-500 shadow-2xl shadow-red-900/50">
+            <h3 class="text-xl font-bold text-red-400 mb-3 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                ACTION REQUIRED: Account Status
+            </h3>
+            <p id="alert-message" class="text-gray-200 mb-6">
+                Your **Total Balance is currently $0.00**. You must deposit funds within **48 hours** or your account will be permanently deleted.
+            </p>
+            <a href="deposit.html" class="w-full py-3 green-gradient-bg text-gray-900 font-bold rounded-xl block text-center hover:opacity-90 transition">
+                Deposit Now
+            </a>
+        </div>
+    </div>
     <header class="header-bg p-4 sticky top-0 z-10">
         <div class="flex justify-between items-center max-w-4xl mx-auto">
             <h1 class="text-2xl font-bold green-gradient-text">N E X U S</h1>
@@ -84,7 +115,11 @@
     <main class="max-w-4xl mx-auto p-4 space-y-8">
         
         <div class="pt-4">
-            <h2 class="text-2xl font-semibold text-gray-200">Welcome back, <span id="full-name" class="green-gradient-text">User</span>.</h2>
+            <div class="flex items-center">
+                <h2 class="text-2xl font-semibold text-gray-200">Welcome back, <span id="full-name" class="green-gradient-text">User</span>.</h2>
+                <div id="badge-container">
+                    </div>
+            </div>
             <p class="text-sm text-gray-500 mt-1">Account ID: <span id="account-id">Loading...</span></p>
             <p id="last-updated" class="text-xs text-gray-600 mt-1">Last Updated: Just now</p>
         </div>
@@ -128,7 +163,7 @@
                 <p id="daily-payout-amount" class="text-4xl font-extrabold text-white">
                     $0.00
                 </p>
-                <p class="text-xs text-gray-500 mt-2">
+                <p id="payout-rate-info" class="text-xs text-gray-500 mt-2">
                     You will get **15%** of your balance added to your withdrawable balance every **24 hours**.
                 </p>
             </div>
@@ -175,14 +210,24 @@
         const USER_DATA_FILE = 'users.json';
         const TOKEN_KEY = 'TID'; // Key for the Account ID
         const BALANCE_KEY = 'bwb'; // Key for Balance/Withdrawable Balance/Daily Payout
-        const LOGIN_PAGE = 'onboarding.html';
+        const LOGIN_PAGE = 'login.html';
         const REFRESH_INTERVAL_MS = 20000; // 20 seconds
-        const DAILY_RATE = 0.15; // 15% rate for daily payout
+        
+        // Initial rate is 15%, but this will be overridden by the badge logic
+        let currentDailyRate = 0.15; 
 
         // Variable to hold the fetched user data
         let USERS_DATABASE = []; 
 
-        // --- EXISTING FUNCTIONS (DO NOT CHANGE) ---
+        // --- NEW: Badge and Rate Mapping ---
+        const BADGE_TIERS = {
+            DIAMOND: { min: 100.01, rate: 0.30, name: "Diamond", color: "badge-diamond" },
+            GOLD: { min: 50.01, rate: 0.25, name: "Gold", color: "badge-gold" },
+            SILVER: { min: 10.01, rate: 0.20, name: "Silver", color: "badge-silver" },
+            EARTH: { min: 0.01, rate: 0.15, name: "Earth", color: "badge-earth" }
+        };
+
+        // --- Helper Functions ---
 
         /**
          * Formats a number as currency.
@@ -190,7 +235,6 @@
          * @returns {string}
          */
         const formatCurrency = (amount) => {
-            // Ensure amount is a number before formatting
             if (typeof amount !== 'number' || isNaN(amount)) {
                 amount = 0; 
             }
@@ -200,9 +244,60 @@
                 minimumFractionDigits: 2,
             }).format(amount);
         };
+        
+        /**
+         * Determines the user's badge status and updates the display and global rate.
+         * @param {number} balance - The user's total balance.
+         */
+        const determineBadgeStatus = (balance) => {
+            let badge = BADGE_TIERS.EARTH; // Default to Earth
+            
+            if (balance > BADGE_TIERS.DIAMOND.min) {
+                badge = BADGE_TIERS.DIAMOND;
+            } else if (balance >= BADGE_TIERS.GOLD.min) {
+                badge = BADGE_TIERS.GOLD;
+            } else if (balance >= BADGE_TIERS.SILVER.min) {
+                badge = BADGE_TIERS.SILVER;
+            } else {
+                // If balance is > $0.00 but <= $10.00, it stays Earth (default)
+                badge = BADGE_TIERS.EARTH;
+            }
+
+            // 1. Update Global Rate
+            currentDailyRate = badge.rate;
+
+            // 2. Update Badge Display
+            const badgeContainer = document.getElementById('badge-container');
+            const ratePercent = (badge.rate * 100).toFixed(0);
+            
+            badgeContainer.innerHTML = `
+                <span class="badge ${badge.color}" title="Daily Payout Rate: ${ratePercent}%">
+                    ${badge.name}
+                </span>
+            `;
+
+            // 3. Update Payout Info Text
+            document.getElementById('payout-rate-info').innerHTML = `
+                You will get **${ratePercent}%** of your balance added to your withdrawable balance every **24 hours**. (Based on ${badge.name} status)
+            `;
+        };
+        
+        /**
+         * Checks if the balance is zero and shows the urgent alert.
+         * @param {number} balance - The user's total balance.
+         */
+        const checkZeroBalanceAndAlert = (balance) => {
+            const alertModal = document.getElementById('custom-alert-zero-balance');
+            if (balance <= 0.00) {
+                alertModal.classList.remove('hidden');
+            } else {
+                alertModal.classList.add('hidden');
+            }
+        };
+
 
         /**
-         * Loads user data from the JSON file.
+         * Loads user data from the JSON file. (No change to this function)
          * @returns {Promise<boolean>} Resolves to true if data was loaded successfully.
          */
         const fetchUserData = async () => {
@@ -213,7 +308,6 @@
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 USERS_DATABASE = await response.json();
-                // console.log("User data loaded from users.json");
                 return true;
             } catch (error) {
                 console.error("Could not load user data from users.json. Ensure a web server is running and the file exists.", error);
@@ -222,7 +316,7 @@
         };
 
         /**
-         * Reads the 'bwb' local storage session and updates the display elements.
+         * Reads the 'bwb' local storage session and updates the display elements. (No functional change)
          */
         const updateDisplayFromLocalStorage = () => {
             const bwbData = localStorage.getItem(BALANCE_KEY);
@@ -232,14 +326,12 @@
                     const balances = JSON.parse(bwbData);
                     document.getElementById('main-balance').textContent = formatCurrency(balances.balance);
                     document.getElementById('withdrawable-balance').textContent = formatCurrency(balances.withdrawable_balance);
-                    // NEW: Update Daily Payout display
                     document.getElementById('daily-payout-amount').textContent = formatCurrency(balances.daily_payout);
                     
                 } catch (e) {
                     console.error("Error parsing 'bwb' local storage data:", e);
                 }
             }
-            // Update timestamp regardless of data success
             document.getElementById('last-updated').textContent = "Last Updated: " + new Date().toLocaleTimeString();
         };
 
@@ -247,7 +339,7 @@
          * Main function to load user data, update local storage, and update the display.
          */
         const loadDashboardData = async () => {
-            const accountId = localStorage.getItem(TOKEN_KEY); // Get account ID from "TID"
+            const accountId = localStorage.getItem(TOKEN_KEY); 
 
             // Step 1: Authentication Check
             if (!accountId) {
@@ -266,13 +358,17 @@
 
             if (!user) {
                 console.error("User data not found for account ID:", accountId);
-                // Force logout if data is corrupt
                 localStorage.removeItem(TOKEN_KEY);
                 window.location.href = LOGIN_PAGE;
                 return;
             }
 
-            // Step 4: Display static user info (only once)
+            // Step 4: Run new badge and alert checks
+            determineBadgeStatus(user.balance);
+            checkZeroBalanceAndAlert(user.balance);
+
+
+            // Step 5: Display static user info (only once)
             const fullNameElement = document.getElementById('full-name');
             const accountIdElement = document.getElementById('account-id');
             if (fullNameElement.textContent === 'User') {
@@ -280,54 +376,51 @@
                 accountIdElement.textContent = user.account_id;
             }
 
-            // Step 5 (MODIFIED): Calculate daily payout, then store all balance info
+            // Step 6 (MODIFIED): Calculate daily payout using the determined rate
             const balancesToStore = calculateDailyPayoutAndStore(user.balance, user.withdrawable_balance);
             localStorage.setItem(BALANCE_KEY, JSON.stringify(balancesToStore));
             
-            // Step 6: Update the display from the newly stored local storage data
+            // Step 7: Update the display from the newly stored local storage data
             updateDisplayFromLocalStorage();
         };
 
         /**
-         * Initializes the dashboard: loads the initial data and sets up the refresh interval.
+         * Initializes the dashboard: loads the initial data and sets up the refresh interval. (No change)
          */
         const startAutoRefresh = () => {
-            // First, load existing data from 'bwb' local storage to show something immediately
             updateDisplayFromLocalStorage();
-
-            // Then, load the dynamic data from the file and store/update 'bwb'
             loadDashboardData();
             
-            // Set up the interval to run the update logic every 20 seconds
             if (REFRESH_INTERVAL_MS > 0) {
                  setInterval(loadDashboardData, REFRESH_INTERVAL_MS);
             }
         };
 
         /**
-         * Removes the token and redirects to login.
+         * Removes the token and redirects to login. (No change)
          */
         const logout = () => {
             localStorage.removeItem(TOKEN_KEY);
-            localStorage.removeItem(BALANCE_KEY); // Clear balance data on logout
+            localStorage.removeItem(BALANCE_KEY);
             window.location.href = LOGIN_PAGE;
         };
 
-        // --- NEW FUNCTION ADDED FOR DAILY PAYOUT CALCULATION ---
+        // --- MODIFIED FUNCTION FOR DAILY PAYOUT CALCULATION ---
 
         /**
-         * Calculates 15% of the total balance and returns the object to be stored.
+         * Calculates the daily payout using the current global rate.
          * @param {number} totalBalance - The user's current total balance (main-balance).
          * @param {number} withdrawableBalance - The user's current withdrawable balance.
          * @returns {object} The complete balance object including the daily payout.
          */
         const calculateDailyPayoutAndStore = (totalBalance, withdrawableBalance) => {
-            const dailyPayoutAmount = totalBalance * DAILY_RATE;
+            // Use the dynamic rate set by determineBadgeStatus
+            const dailyPayoutAmount = totalBalance * currentDailyRate; 
             
             return {
                 balance: totalBalance,
                 withdrawable_balance: withdrawableBalance,
-                daily_payout: dailyPayoutAmount // Add the calculated value here
+                daily_payout: dailyPayoutAmount 
             };
         };
 

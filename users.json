@@ -1,3 +1,52 @@
-[{"account_id": "090451","full_name": "Emma","email": "emmonblack931@gmail.com","password": "Rejudo123","balance": 10,"withdrawable_balance": 7,"referral_code_used": "333222","user_referral_code": "122345","active_plans": ["Basic"]},
-{"account_id": "090456","full_name": "onyebuchi solomon","email": "solomon931@gmail.com","password": "Rejudo123","balance": 100,"withdrawable_balance": 7,"referral_code_used": "333222","user_referral_code": "122345","active_plans": ["Basic"]},
-{"account_id": "123356","full_name": "Nunny","email": "dejamesmedia@gmail.com","password": "123456","balance": 2000,"withdrawable_balance": 10,"referral_code_used": "123456","user_referral_code": "123456","active_plans": [""]}]
+[
+  {
+    "account_id": "090451",
+    "full_name": "Emma",
+    "email": "emmonblack931@gmail.com",
+    "password": "Rejudo123",
+    "balance": 0,
+    "withdrawable_balance": 7,
+    "referral_code_used": "333222",
+    "user_referral_code": "122345",
+    "active_plans": [
+      "Basic"
+    ]
+  },
+  {
+    "account_id": "090456",
+    "full_name": "onyebuchi solomon",
+    "email": "solomon931@gmail.com",
+    "password": "Rejudo123",
+    "balance": 100,
+    "withdrawable_balance": 7,
+    "referral_code_used": "333222",
+    "user_referral_code": "122345",
+    "active_plans": [
+      "Basic"
+    ]
+  },
+  {
+    "account_id": "123356",
+    "full_name": "unny",
+    "email": "dejamesmedia@gmail.com",
+    "password": "123456",
+    "balance": 2000,
+    "withdrawable_balance": 10,
+    "referral_code_used": "123456",
+    "user_referral_code": "123456",
+    "active_plans": [
+      ""
+    ]
+  },
+  {
+    "account_id": "931370",
+    "full_name": "Emmmanuel",
+    "email": "onyedikachijames715@gmail.com",
+    "password": "111111",
+    "balance": 0,
+    "withdrawable_balance": 0,
+    "referral_code_used": "11111",
+    "user_referral_code": "1111",
+    "active_plans": []
+  }
+]

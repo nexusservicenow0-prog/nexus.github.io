@@ -44,6 +44,14 @@
             opacity: 0.9;
             box-shadow: 0 4px 15px rgba(0, 255, 128, 0.4);
         }
+        
+        .mini-pay-card {
+            border-left: 4px solid #6a5acd; /* Royal Purple for Mini Pay */
+        }
+        .mini-pay-number {
+            color: #6a5acd; 
+            font-size: 1.5rem; /* Larger font size for the number */
+        }
     </style>
 </head>
 <body>
@@ -59,10 +67,38 @@
 
     <main class="max-w-xl mx-auto p-4 space-y-8">
         
-        <div id="view-form" class="space-y-6">
-            <h2 class="text-3xl font-bold text-gray-100">Deposit Funds (NGN)</h2>
+        <h2 class="text-3xl font-bold text-gray-100">Deposit Funds</h2>
 
-            <div class="card p-6 space-y-4">
+        <div id="deposit-container" class="space-y-8">
+            
+            <div class="card p-6 mini-pay-card">
+                <h3 class="text-xl font-bold text-gray-200 mb-4 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 mr-2 text-[#6a5acd]"><circle cx="12" cy="12" r="10"></circle><path d="M12 8l4 4-4 4M8 12h8"></path></svg>
+                    Deposit via Mini Pay (Manual)
+                </h3>
+                <p class="text-sm text-gray-400 mb-4">
+                    To make a deposit using **Mini Pay**, please send the deposit amount directly to the number below and then contact the agent for confirmation.
+                </p>
+                
+                <div class="bg-gray-800 p-4 rounded-lg flex flex-col sm:flex-row justify-between items-center mb-4">
+                    <span class="text-lg font-mono text-white select-all mini-pay-number">+234707880</span>
+                    <a 
+                        href="tel:+234707880" 
+                        class="bg-green-600 text-white font-bold py-2 px-4 rounded-lg text-sm mt-3 sm:mt-0 hover:bg-green-700 transition"
+                    >
+                        Contact Agent
+                    </a>
+                </div>
+
+                <p class="text-sm text-yellow-300 font-semibold">
+                    **MANDATORY:** You **must** message the number with your **Nexus Account ID** and the **Amount** transferred for your funds to be credited.
+                </p>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-200 pt-4">OR Deposit via Bank Transfer</h3>
+            
+            <div id="view-form" class="space-y-6 card p-6">
+                <h4 class="text-xl font-bold text-gray-100 border-b border-gray-700 pb-2">Step 1: Enter Amount (NGN)</h4>
+
                 <p class="text-sm text-gray-500">Minimum Deposit: ₦3,000.00</p>
                 
                 <label for="depositAmount" class="block text-sm font-medium text-gray-400">Amount in Naira (₦)</label>
@@ -80,19 +116,19 @@
                     <p id="usdReceive" class="text-2xl font-bold text-green-400">$0.00</p>
                     <p class="text-xs text-gray-500 mt-1">Conversion Rate: ₦1,500 = $1 USD</p>
                 </div>
+                
+                <button 
+                    id="initiateDepositBtn"
+                    class="w-full py-4 green-gradient-bg text-gray-900 font-bold rounded-xl shadow-lg transition duration-300"
+                    disabled
+                >
+                    Proceed to Bank Details
+                </button>
+            </div>
             </div>
 
-            <button 
-                id="initiateDepositBtn"
-                class="w-full py-4 green-gradient-bg text-gray-900 font-bold rounded-xl shadow-lg transition duration-300"
-                disabled
-            >
-                Deposit
-            </button>
-        </div>
-
         <div id="view-details" class="hidden space-y-6 text-center">
-            <h2 class="text-3xl font-bold green-gradient-text">Transfer to Bank</h2>
+            <h2 class="text-3xl font-bold green-gradient-text">Step 2: Make Transfer</h2>
             <p class="text-gray-400">Please make a transfer of exactly <span id="depositAmountDisplay" class="font-bold text-green-400"></span> to the account details below.</p>
             <p class="text-red-400 text-sm font-semibold">Note: The account name must match your registered full name for automatic processing.</p>
 
@@ -121,7 +157,6 @@
                 I have made this deposit
             </button>
         </div>
-
         <div id="view-processing" class="hidden space-y-6 text-center">
             <svg class="mx-auto w-20 h-20 text-green-400 animate-spin" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12 4V2M12 22V20M4 12H2M22 12H20M5.636 5.636L4.222 4.222M19.778 19.778L18.364 18.364M19.778 4.222L18.364 5.636M4.222 19.778L5.636 18.364" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -136,8 +171,7 @@
                 Go to Dashboard
             </a>
         </div>
-
-    </main>
+        </main>
 
     <script>
         // --- Configuration Constants ---
@@ -253,7 +287,7 @@
             accountNameDisplay.textContent = userFullName; // Use the fetched name
 
             // Switch views
-            viewForm.classList.add('hidden');
+            document.getElementById('deposit-container').classList.add('hidden');
             viewDetails.classList.remove('hidden');
             viewProcessing.classList.add('hidden');
         };
@@ -263,7 +297,7 @@
          */
         const showProcessing = () => {
             // Switch views
-            viewForm.classList.add('hidden');
+            document.getElementById('deposit-container').classList.add('hidden');
             viewDetails.classList.add('hidden');
             viewProcessing.classList.remove('hidden');
         };

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download Nexus App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for the Fintech Theme (Black/Green) */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d0d0d; 
+            min-height: 100vh;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .header-bg {
+            background-color: #1a1a1a;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+        }
+
+        .card {
+            background: #1a1a1a;
+            border: 1px solid #282828;
+            border-radius: 16px;
+            box-shadow: 0 0 20px rgba(0, 255, 128, 0.05);
+        }
+
+        /* Define the green gradient */
+        .green-gradient-text {
+            background-image: linear-gradient(to right, #00FF80, #00C864);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
+        }
+
+        .green-gradient-bg {
+            background-image: linear-gradient(to right, #00FF80, #00C864);
+            transition: all 0.3s ease;
+        }
+        
+        .green-gradient-bg:hover {
+            opacity: 0.9;
+            box-shadow: 0 4px 20px rgba(0, 255, 128, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="max-w-xl w-full space-y-8 p-6 card">
+        
+        <!-- Header -->
+        <div class="space-y-3">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 mx-auto text-green-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            <h1 class="text-4xl font-extrabold green-gradient-text">
+                Go Mobile with Nexus
+            </h1>
+            <p class="text-gray-400">
+                Manage your AI Forex trading bot, monitor live profits, and access your account securely from anywhere.
+            </p>
+        </div>
+
+        <!-- Download Info -->
+        <div class="bg-gray-800 p-4 rounded-lg space-y-2">
+            <p class="text-sm font-semibold text-gray-300">File Details:</p>
+            <ul class="text-xs text-gray-500 space-y-1">
+                <li class="flex justify-between"><span>Application Name:</span> <span class="text-white">Nexus Trader Bot</span></li>
+                <li class="flex justify-between"><span>Version:</span> <span class="text-white">1.2.0 (Stable)</span></li>
+                <li class="flex justify-between"><span>File Type:</span> <span class="text-white">Android Package (APK)</span></li>
+                <li class="flex justify-between"><span>File Size:</span> <span class="text-white">35 MB</span></li>
+            </ul>
+        </div>
+
+        <!-- Download Button -->
+        <a href="Nexus.apk" download="Nexus.apk" class="w-full py-4 green-gradient-bg text-gray-900 font-bold rounded-xl block text-center text-lg shadow-2xl hover:shadow-[#00FF80]/80 transition duration-300 flex items-center justify-center space-x-3">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            <span>Download Nexus.apk</span>
+        </a>
+
+        <!-- Warning/Instructions -->
+        <div class="text-xs text-gray-600 pt-4">
+            <p>
+                <span class="text-red-400 font-bold">Important:</span> This file may require you to enable "Install from Unknown Sources" in your Android settings.
+            </p>
+            <a href="dashboard.html" class="text-green-500 hover:text-green-400 mt-2 inline-block">
+                ← Return to Dashboard
+            </a>
+        </div>
+    </div>
+</body>
+</html>

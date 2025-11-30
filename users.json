@@ -31,7 +31,7 @@
     "email": "anoziejaphet@gmail.com",
     "password": "jaan091",
     "balance": 2,
-    "withdrawable_balance": 0,
+    "withdrawable_balance": 0.3,
     "referral_code_used": "123645",
     "user_referral_code": "125345",
     "active_plans": [

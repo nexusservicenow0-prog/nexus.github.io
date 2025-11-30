@@ -67,10 +67,21 @@
     "full_name": "Onah miracle ",
     "email": "miracleamarachi2006@gmail.com",
     "password": "miraamar2006",
-    "balance": 0.70,
+    "balance": 0.7,
     "withdrawable_balance": 0,
     "referral_code_used": "126534",
     "user_referral_code": "189911",
+    "active_plans": []
+  },
+  {
+    "account_id": "07070735202",
+    "full_name": "Paschal onah ",
+    "email": "pascalonah8@gmail.com",
+    "password": "Pasconh123",
+    "balance": 58,
+    "withdrawable_balance": 0,
+    "referral_code_used": "445666",
+    "user_referral_code": "126435",
     "active_plans": []
   }
 ]

@@ -150,7 +150,7 @@
             </p>
         </div>
         
-        <!-- NEW: WEEKLY BALANCE TRANSFER WARNING/REMINDER -->
+        <!-- WEEKLY BALANCE TRANSFER WARNING/REMINDER -->
         <div class="warning-card p-4">
             <h3 class="font-bold text-yellow-300 mb-1 flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2 text-yellow-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
@@ -160,7 +160,6 @@
                 Any funds remaining in your **Total Balance** after **7 days** will be automatically transferred to your **Available to Withdraw** balance every **Sunday**. This ensures all accumulated profits are made available for payout weekly.
             </p>
         </div>
-        <!-- END NEW WARNING -->
 
         <!-- START: CONSOLIDATED BALANCE CARD -->
         <div class="card p-6 space-y-6">
@@ -211,6 +210,31 @@
         </div>
         <!-- END: CONSOLIDATED BALANCE CARD -->
         
+        <!-- NEW: LAST TRADE CARD -->
+        <div id="last-trade-card" class="card p-6 space-y-4">
+            <h3 class="text-xl font-bold text-gray-200 border-b border-gray-700 pb-3 mb-3 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mr-2 text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26a8 8 0 110 4h1.26"></path><path d="M22 6L18 10L22 14"></path><path d="M2 10L6 14L2 18"></path></svg>
+                Last Trade Activity
+            </h3>
+            
+            <div class="flex justify-between items-center">
+                <p class="text-sm font-medium text-gray-400">Pair Traded:</p>
+                <p id="trade-pair" class="text-lg font-bold text-white">Loading...</p>
+            </div>
+            
+            <div class="flex justify-between items-center">
+                <p class="text-sm font-medium text-gray-400">Time Closed:</p>
+                <p id="trade-time" class="text-sm font-medium text-gray-300">Loading...</p>
+            </div>
+
+            <div class="flex justify-between items-center">
+                <p class="text-sm font-medium text-gray-400">Profit/Loss:</p>
+                <p id="trade-profit" class="text-2xl font-extrabold text-white">---</p>
+            </div>
+        </div>
+        <!-- END: LAST TRADE CARD -->
+
+
         <div class="grid grid-cols-2 gap-4 pt-4">
             <a href="deposit.html" class="text-center py-4 rounded-xl green-gradient-bg text-gray-900 font-semibold shadow-lg hover:shadow-[#00FF80]/50 transition duration-300">
                 Deposit
@@ -261,7 +285,7 @@
         // Variable to hold the fetched user data
         let USERS_DATABASE = []; 
 
-        // --- NEW: Badge and Rate Mapping ---
+        // --- Badge and Rate Mapping ---
         const BADGE_TIERS = {
             DIAMOND: { min: 100.01, rate: 0.30, name: "Diamond", color: "badge-diamond" },
             GOLD: { min: 50.01, rate: 0.25, name: "Gold", color: "badge-gold" },
@@ -339,7 +363,7 @@
 
 
         /**
-         * Loads user data from the JSON file. (No change to this function)
+         * Loads user data from the JSON file.
          * @returns {Promise<boolean>} Resolves to true if data was loaded successfully.
          */
         const fetchUserData = async () => {
@@ -358,7 +382,7 @@
         };
 
         /**
-         * Reads the 'bwb' local storage session and updates the display elements. (No functional change)
+         * Reads the 'bwb' local storage session and updates the display elements.
          */
         const updateDisplayFromLocalStorage = () => {
             const bwbData = localStorage.getItem(BALANCE_KEY);
@@ -376,6 +400,73 @@
             }
             document.getElementById('last-updated').textContent = "Last Updated: " + new Date().toLocaleTimeString();
         };
+
+        /**
+         * Calculates the daily payout using the current global rate.
+         * @param {number} totalBalance - The user's current total balance (main-balance).
+         * @param {number} withdrawableBalance - The user's current withdrawable balance.
+         * @returns {object} The complete balance object including the daily payout.
+         */
+        const calculateDailyPayoutAndStore = (totalBalance, withdrawableBalance) => {
+            // Use the dynamic rate set by determineBadgeStatus
+            const dailyPayoutAmount = totalBalance * currentDailyRate; 
+            
+            return {
+                balance: totalBalance,
+                withdrawable_balance: withdrawableBalance,
+                daily_payout: dailyPayoutAmount 
+            };
+        };
+
+        // --- New Logic for Last Trade Card ---
+
+        /**
+         * Simulates generating a random Forex trade result.
+         * @returns {object} Trade data object.
+         */
+        const getSimulatedTrade = () => {
+             // Available pairs
+            const pairs = ["EUR/USD", "GBP/JPY", "AUD/NZD", "USD/CAD", "EUR/JPY"];
+            const randomPair = pairs[Math.floor(Math.random() * pairs.length)];
+
+            // Random profit/loss between -10% and +60% (weighted towards profit for an AI bot)
+            // (Math.random() * 0.7) generates 0.0 to 0.7. Subtracting 0.1 gives -0.1 to 0.6.
+            let profit = (Math.random() * 0.7) - 0.1; 
+
+            return {
+                pair: randomPair,
+                profit_percent: parseFloat(profit.toFixed(4)),
+                timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true })
+            };
+        };
+
+        /**
+         * Updates the Last Trade card in the UI with simulated data.
+         */
+        const updateLastTradeCard = () => {
+            const tradeData = getSimulatedTrade(); 
+            
+            const profitElement = document.getElementById('trade-profit');
+            const pairElement = document.getElementById('trade-pair');
+            const timeElement = document.getElementById('trade-time');
+
+            const isProfit = tradeData.profit_percent >= 0;
+            const profitText = (isProfit ? "+" : "") + (tradeData.profit_percent * 100).toFixed(2) + "%";
+            
+            // Set color based on profit (Green for +, Red for -)
+            profitElement.classList.remove('text-green-500', 'text-red-500', 'text-white');
+            if (isProfit) {
+                profitElement.classList.add('text-green-500');
+            } else {
+                profitElement.classList.add('text-red-500');
+            }
+
+            // Update content
+            pairElement.textContent = tradeData.pair;
+            profitElement.textContent = profitText;
+            timeElement.textContent = tradeData.timestamp;
+        };
+
 
         /**
          * Main function to load user data, update local storage, and update the display.
@@ -418,7 +509,7 @@
                 accountIdElement.textContent = user.account_id;
             }
 
-            // Step 6 (MODIFIED): Calculate daily payout using the determined rate
+            // Step 6: Calculate daily payout using the determined rate and store it
             const balancesToStore = calculateDailyPayoutAndStore(user.balance, user.withdrawable_balance);
             localStorage.setItem(BALANCE_KEY, JSON.stringify(balancesToStore));
             
@@ -427,43 +518,26 @@
         };
 
         /**
-         * Initializes the dashboard: loads the initial data and sets up the refresh interval. (No change)
+         * Initializes the dashboard: loads the initial data and sets up the refresh interval.
          */
         const startAutoRefresh = () => {
             updateDisplayFromLocalStorage();
             loadDashboardData();
+            updateLastTradeCard(); // Initial call for the new card
             
             if (REFRESH_INTERVAL_MS > 0) {
                  setInterval(loadDashboardData, REFRESH_INTERVAL_MS);
+                 setInterval(updateLastTradeCard, REFRESH_INTERVAL_MS); // Refresh trade data separately
             }
         };
 
         /**
-         * Removes the token and redirects to login. (No change)
+         * Removes the token and redirects to login.
          */
         const logout = () => {
             localStorage.removeItem(TOKEN_KEY);
             localStorage.removeItem(BALANCE_KEY);
             window.location.href = LOGIN_PAGE;
-        };
-
-        // --- MODIFIED FUNCTION FOR DAILY PAYOUT CALCULATION ---
-
-        /**
-         * Calculates the daily payout using the current global rate.
-         * @param {number} totalBalance - The user's current total balance (main-balance).
-         * @param {number} withdrawableBalance - The user's current withdrawable balance.
-         * @returns {object} The complete balance object including the daily payout.
-         */
-        const calculateDailyPayoutAndStore = (totalBalance, withdrawableBalance) => {
-            // Use the dynamic rate set by determineBadgeStatus
-            const dailyPayoutAmount = totalBalance * currentDailyRate; 
-            
-            return {
-                balance: totalBalance,
-                withdrawable_balance: withdrawableBalance,
-                daily_payout: dailyPayoutAmount 
-            };
         };
 
         // --- Event Listeners ---

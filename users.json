@@ -31,7 +31,7 @@
     "email": "anoziejaphet@gmail.com",
     "password": "jaan091",
     "balance": 2,
-    "withdrawable_balance": 0.3,
+    "withdrawable_balance": 0.6,
     "referral_code_used": "123645",
     "user_referral_code": "125345",
     "active_plans": [
@@ -68,7 +68,7 @@
     "email": "miracleamarachi2006@gmail.com",
     "password": "miraamar2006",
     "balance": 0.7,
-    "withdrawable_balance": 0,
+    "withdrawable_balance": 0.13,
     "referral_code_used": "126534",
     "user_referral_code": "189911",
     "active_plans": []
@@ -90,7 +90,7 @@
     "email": "chinecheremc349@gmail.com",
     "password": "429283",
     "balance": 0.1,
-    "withdrawable_balance": 0,
+    "withdrawable_balance": 0.001,
     "referral_code_used": "",
     "user_referral_code": "457239",
     "active_plans": []
@@ -101,7 +101,7 @@
     "email": "miracleblessing378@gmail.com",
     "password": "890450",
     "balance": 3.47,
-    "withdrawable_balance": 0,
+    "withdrawable_balance": 0.347,
     "referral_code_used": "101010",
     "user_referral_code": "111111",
     "active_plans": []

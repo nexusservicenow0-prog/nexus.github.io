@@ -84,6 +84,22 @@
         .badge-silver { background-color: #a0aec0; color: #2d3748; } /* Silver/Gray tones */
         .badge-gold { background-color: #ecc94b; color: #4a5568; } /* Gold/Yellow tones */
         .badge-diamond { background-color: #63b3ed; color: #1a202c; } /* Diamond/Blue tones */
+        
+        /* Divider style for the new combined card */
+        .balance-divider {
+            border-top: 1px solid #282828;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        /* New Warning Card Style */
+        .warning-card {
+            background: #2a1f00; /* Darker yellow/gold background */
+            border: 1px solid #ecc94b; /* Gold border */
+            border-radius: 16px;
+            box-shadow: 0 0 15px rgba(255, 204, 0, 0.2);
+            color: #ffcc00; /* Gold text */
+        }
 
     </style>
 </head>
@@ -133,41 +149,67 @@
                 Nexus is an **AI Forex Trading Bot**. We automate currency trades on your behalf and guarantee a **15% daily return** on your total balance, which is added directly to your withdrawable funds.
             </p>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- NEW: WEEKLY BALANCE TRANSFER WARNING/REMINDER -->
+        <div class="warning-card p-4">
+            <h3 class="font-bold text-yellow-300 mb-1 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2 text-yellow-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                Weekly Profit Reminder
+            </h3>
+            <p class="text-sm text-yellow-100">
+                Any funds remaining in your **Total Balance** after **7 days** will be automatically transferred to your **Available to Withdraw** balance every **Sunday**. This ensures all accumulated profits are made available for payout weekly.
+            </p>
+        </div>
+        <!-- END NEW WARNING -->
 
-            <div class="card p-6">
-                <p class="text-sm font-medium text-gray-400 mb-2 flex items-center">
+        <!-- START: CONSOLIDATED BALANCE CARD -->
+        <div class="card p-6 space-y-6">
+            <h3 class="text-xl font-bold text-gray-200 border-b border-gray-700 pb-3 mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mr-2 inline-block text-green-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+                Financial Summary
+            </h3>
+            
+            <!-- 1. Total Balance -->
+            <div>
+                <p class="text-sm font-medium text-gray-400 mb-1 flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2 text-green-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"></path></svg>
                     Total Balance
                 </p>
-                <p id="main-balance" class="text-5xl font-extrabold green-gradient-text">
+                <p id="main-balance" class="text-4xl font-extrabold green-gradient-text">
                     $0.00
                 </p>
             </div>
 
-            <div class="card p-6">
-                <p class="text-sm font-medium text-gray-400 mb-2 flex items-center">
+            <div class="balance-divider"></div>
+
+            <!-- 2. Available to Withdraw -->
+            <div>
+                <p class="text-sm font-medium text-gray-400 mb-1 flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2 text-yellow-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M16 8l-8 8M8 8l8 8"></path></svg>
                     Available to Withdraw
                 </p>
-                <p id="withdrawable-balance" class="text-5xl font-extrabold text-yellow-300">
+                <p id="withdrawable-balance" class="text-4xl font-extrabold text-yellow-300">
                     $0.00
                 </p>
             </div>
             
-            <div class="card p-6 md:col-span-2">
-                <p class="text-sm font-medium text-green-400 mb-2 flex items-center">
+            <div class="balance-divider"></div>
+
+            <!-- 3. Daily Payout -->
+            <div>
+                <p class="text-sm font-medium text-gray-400 mb-1 flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2 text-green-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"></path><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"></path><path d="M16 3h2a2 2 0 012 2v14a2 2 0 01-2 2h-2"></path></svg>
-                    Daily Payout
+                    Next Daily Payout Estimate
                 </p>
-                <p id="daily-payout-amount" class="text-4xl font-extrabold text-white">
+                <p id="daily-payout-amount" class="text-3xl font-extrabold text-white">
                     $0.00
                 </p>
                 <p id="payout-rate-info" class="text-xs text-gray-500 mt-2">
                     You will get **15%** of your balance added to your withdrawable balance every **24 hours**.
                 </p>
             </div>
-            </div>
+        </div>
+        <!-- END: CONSOLIDATED BALANCE CARD -->
         
         <div class="grid grid-cols-2 gap-4 pt-4">
             <a href="deposit.html" class="text-center py-4 rounded-xl green-gradient-bg text-gray-900 font-semibold shadow-lg hover:shadow-[#00FF80]/50 transition duration-300">

@@ -105,5 +105,16 @@
     "referral_code_used": "101010",
     "user_referral_code": "111111",
     "active_plans": []
+  },
+  {
+    "account_id": "09019942449",
+    "full_name": "Ifeanyi Ernest ",
+    "email": "ernestifeanyi501@gmail.com",
+    "password": "775397",
+    "balance": 0.1,
+    "withdrawable_balance": 0,
+    "referral_code_used": "146345",
+    "user_referral_code": "IFERN123",
+    "active_plans": []
   }
 ]

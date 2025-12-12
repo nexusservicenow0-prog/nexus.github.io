@@ -270,98 +270,7 @@
         </div>
     </nav>
 
-<!-- NEW: BADGE TIER EXPLANATION CARD (Self-Contained for easy insertion) -->
-<style>
-    /* Ensure styles are contained and apply only to this card if placed externally */
-    .badge-explanation-card {
-        background: #1a1a1a;
-        border: 1px solid #282828;
-        border-radius: 16px;
-        box-shadow: 0 0 20px rgba(0, 255, 128, 0.05);
-        padding: 1.5rem;
-    }
-    .badge-row {
-        background-color: #0d0d0d;
-        border-radius: 8px;
-        padding: 0.75rem;
-        margin-top: 0.5rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        transition: background-color 0.2s;
-    }
-    .badge-row:hover {
-        background-color: #1f1f1f;
-    }
-    .badge-name {
-        font-weight: 700;
-        font-size: 0.875rem; /* text-sm */
-    }
-    /* Specific badge color definitions for this card */
-    .badge-earth-color { color: #38a169; }
-    .badge-silver-color { color: #a0aec0; }
-    .badge-gold-color { color: #ecc94b; }
-    .badge-diamond-color { color: #63b3ed; }
-    
-    .current-badge-indicator {
-        position: relative;
-        padding-left: 1rem;
-    }
-    .current-badge-indicator::before {
-        content: "•";
-        color: #00FF80; /* Green highlight */
-        font-size: 2rem;
-        position: absolute;
-        left: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        line-height: 0;
-    }
-</style>
 
-<div id="badge-explanation-card" class="badge-explanation-card space-y-4">
-    <h3 class="text-xl font-bold text-gray-200 border-b border-gray-700 pb-3 mb-3 flex items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mr-2 text-yellow-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17.27l-5.17 3.65 1.5-6.07-4.71-4.08 6.18-.53 2.4-5.73 2.4 5.73 6.18.53-4.71 4.08 1.5 6.07z"></path></svg>
-        Nexus Payout Levels Explained
-    </h3>
-    <p class="text-sm text-gray-400">
-        Your payout rate (the daily percentage you earn) depends on your **Total Balance**. Deposit more to automatically upgrade your badge and boost your returns!
-    </p>
-
-    <!-- Badge Tier List -->
-    <div class="space-y-2 pt-2">
-        
-        <!-- Diamond Tier -->
-        <div class="badge-row">
-            <div class="badge-name badge-diamond-color">DIAMOND (20% Daily)</div>
-            <div class="text-sm text-white font-semibold">Balance over $100.00</div>
-        </div>
-        
-        <!-- Gold Tier -->
-        <div class="badge-row">
-            <div class="badge-name badge-gold-color">GOLD (16% Daily)</div>
-            <div class="text-sm text-white font-semibold">Balance over $50.00</div>
-        </div>
-
-        <!-- Silver Tier -->
-        <div class="badge-row">
-            <div class="badge-name badge-silver-color">SILVER (10% Daily)</div>
-            <div class="text-sm text-white font-semibold">Balance over $10.00</div>
-        </div>
-        
-        <!-- Earth Tier -->
-        <div class="badge-row current-badge-indicator">
-            <div class="badge-name badge-earth-color">EARTH (9% Daily)</div>
-            <div class="text-sm text-white font-semibold">Balance up to $10.00</div>
-        </div>
-
-    </div>
-    
-    <p class="text-xs text-gray-500 pt-3 border-t border-gray-800">
-        **Tip:** To get the **Silver** badge (10% payout), your Total Balance must be greater than **$10.00**.
-    </p>
-</div>
-<!-- END: BADGE TIER EXPLANATION CARD -->
     <script>
         // --- Configuration Constants ---
         const USER_DATA_FILE = 'users.json';
@@ -378,10 +287,10 @@
 
         // --- Badge and Rate Mapping ---
         const BADGE_TIERS = {
-            DIAMOND: { min: 100.01, rate: 0.20, name: "Diamond", color: "badge-diamond" },
-            GOLD: { min: 50.01, rate: 0.16, name: "Gold", color: "badge-gold" },
-            SILVER: { min: 10.01, rate: 0.12, name: "Silver", color: "badge-silver" },
-            EARTH: { min: 0.01, rate: 0.9, name: "Earth", color: "badge-earth" }
+            DIAMOND: { min: 100.01, rate: 0.30, name: "Diamond", color: "badge-diamond" },
+            GOLD: { min: 50.01, rate: 0.25, name: "Gold", color: "badge-gold" },
+            SILVER: { min: 10.01, rate: 0.20, name: "Silver", color: "badge-silver" },
+            EARTH: { min: 0.01, rate: 0.15, name: "Earth", color: "badge-earth" }
         };
 
         // --- Helper Functions ---

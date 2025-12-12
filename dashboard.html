@@ -104,7 +104,102 @@
     </style>
 </head>
 <body>
-    
+    <!-- CHRISTMAS PROMOTION MODAL -->
+<div id="christmas-promo-alert" class="fixed inset-0 bg-black bg-opacity-90 hidden flex items-center justify-center p-4 z-50 transition-opacity duration-300">
+    <div class="bg-[#181818] p-6 rounded-xl w-full max-w-lg border-2 border-green-500 shadow-2xl shadow-green-900/50 transform scale-95 transition-transform duration-300 ease-out">
+        
+        <h3 class="text-3xl font-extrabold text-white mb-4 flex items-center justify-center">
+            <span class="text-yellow-400 mr-3">🎄</span>
+            <span class="neon-text">NEXUS HOLIDAY BONUS</span>
+            <span class="text-yellow-400 ml-3">🎄</span>
+        </h3>
+        
+        <p class="text-base text-gray-300 mb-6 text-center">
+            Unlock exclusive rewards this festive season to boost your passive income!
+        </p>
+        
+        <div class="space-y-4 mb-8">
+            
+            <!-- 1. Deposit Bonus -->
+            <div class="bg-[#2a2a2a] p-4 rounded-lg border-l-4 border-green-400 shadow-md">
+                <div class="flex items-center mb-1">
+                    <span class="text-2xl mr-3 neon-text font-bold">+20%</span>
+                    <h4 class="text-xl font-semibold text-green-300">Deposit Power-Up</h4>
+                </div>
+                <p class="text-sm text-gray-400 pl-8">
+                    Make any deposit now and receive a **permanent +20% boost** to your guaranteed daily payout rate!
+                </p>
+            </div>
+
+            <!-- 2. Referral Bonus -->
+            <div class="bg-[#2a2a2a] p-4 rounded-lg border-l-4 border-yellow-400 shadow-md">
+                <div class="flex items-center mb-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mr-3 text-yellow-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 01-3.46 0"></path></svg>
+                    <h4 class="text-xl font-semibold text-yellow-300">$15 Christmas Referral Bonus</h4>
+                </div>
+                <p class="text-sm text-gray-400 pl-8">
+                    Successfully invite **10 new friends** to Nexus before Jan 1st and instantly receive a **$15.00** bonus added to your withdrawable balance.
+                </p>
+            </div>
+            
+        </div>
+
+        <div class="flex space-x-4">
+            <!-- Main CTA Button -->
+            <a href="deposit.html" class="flex-1 py-3 rounded-xl neon-bg text-gray-900 font-bold hover:opacity-90 transition shadow-lg shadow-[#00FF80]/50">
+                Claim Offer & Deposit Now
+            </a>
+            
+            <!-- Cancel/Close Button -->
+            <button onclick="closeChristmasAlert()" class="py-3 px-6 rounded-xl bg-gray-700 text-gray-300 font-semibold hover:bg-gray-600 transition">
+                Cancel
+            </button>
+        </div>
+        
+    </div>
+</div>
+
+<script>
+    // NOTE: This assumes the CSS classes 'neon-text' and 'neon-bg' are defined in your main <style> block.
+
+    /**
+     * Shows the Christmas promotion alert modal.
+     */
+    function showChristmasAlert() {
+        const modal = document.getElementById('christmas-promo-alert');
+        if (modal) {
+             modal.classList.remove('hidden');
+             // Add animation classes for a smooth entry
+             setTimeout(() => {
+                modal.querySelector('div').classList.remove('scale-95');
+                modal.style.opacity = '1';
+             }, 10); // Small delay to ensure display:block takes effect first
+        }
+    }
+
+    /**
+     * Hides the Christmas promotion alert modal.
+     */
+    function closeChristmasAlert() {
+        const modal = document.getElementById('christmas-promo-alert');
+        if (modal) {
+             modal.querySelector('div').classList.add('scale-95');
+             modal.style.opacity = '0';
+             // Hide after transition
+             setTimeout(() => {
+                modal.classList.add('hidden');
+             }, 300); // Matches the duration-300 CSS transition
+        }
+    }
+
+    // Example of how you would call this function (e.g., after login, or via a button click):
+    // You should probably call showChristmasAlert() after initializeDashboard() runs for the first time.
+    // window.onload = () => {
+    //     initializeDashboard(); // existing function
+    //     showChristmasAlert(); // call the promo modal
+    // };
+</script>
+<!-- END CHRISTMAS PROMOTION MODAL -->
     <div id="custom-alert-zero-balance" class="fixed inset-0 bg-black bg-opacity-80 hidden flex items-center justify-center p-4 z-50">
         <div class="bg-gray-800 p-6 rounded-xl w-full max-w-sm border-2 border-red-500 shadow-2xl shadow-red-900/50">
             <h3 class="text-xl font-bold text-red-400 mb-3 flex items-center">

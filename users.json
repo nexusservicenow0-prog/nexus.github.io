@@ -160,5 +160,27 @@
     "referral_code_used": "DEJME98 ",
     "user_referral_code": "OPABD76",
     "active_plans": []
+  },
+  {
+    "account_id": "09035617988",
+    "full_name": "PERES TAIWO CHRIS ",
+    "email": "kingtech4@gmail.com",
+    "password": "332216",
+    "balance": 0.1,
+    "withdrawable_balance": 0,
+    "referral_code_used": "DEJME98 ",
+    "user_referral_code": "PERTAI88",
+    "active_plans": []
+  },
+  {
+    "account_id": "07070207985",
+    "full_name": "Queen cee",
+    "email": "qcee5242@gmail.com",
+    "password": "142938",
+    "balance": 0.1,
+    "withdrawable_balance": 0,
+    "referral_code_used": "DEJME98 ",
+    "user_referral_code": "QUCEE85",
+    "active_plans": []
   }
 ]

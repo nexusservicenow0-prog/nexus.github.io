@@ -122,8 +122,8 @@
     "full_name": "Ifeanyi Ernest ",
     "email": "ernestifeanyi501@gmail.com",
     "password": "775397",
-    "balance": 10,
-    "withdrawable_balance": 1.5,
+    "balance": 2,
+    "withdrawable_balance": 0,
     "referral_code_used": "146345",
     "user_referral_code": "IFERN123",
     "active_plans": []

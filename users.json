@@ -237,5 +237,16 @@
     "referral_code_used": "NEWUSER1",
     "user_referral_code": "EMENIOK558",
     "active_plans": []
+  },
+  {
+    "account_id": "08058994091",
+    "full_name": "Meshack Onyekachi",
+    "email": "meshackonyekachi9@gmail.com",
+    "password": "874991",
+    "balance": 0,
+    "withdrawable_balance": 0.1,
+    "referral_code_used": "NEWUSER1",
+    "user_referral_code": "MESHONY91",
+    "active_plans": []
   }
-]
+    ]

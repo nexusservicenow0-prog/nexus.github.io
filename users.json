@@ -215,5 +215,27 @@
     "referral_code_used": "12345",
     "user_referral_code": "DIVOMO",
     "active_plans": []
+  },
+  {
+    "account_id": "07039988437",
+    "full_name": "Abraham Effiong",
+    "email": "effiongabraham44445@gmail.com",
+    "password": "653232",
+    "balance": 0,
+    "withdrawable_balance": 0.1,
+    "referral_code_used": "NEWUSER1",
+    "user_referral_code": "ABREFFIONG32",
+    "active_plans": []
+  },
+  {
+    "account_id": "07018240558",
+    "full_name": "Emeka Nicolas okafor ",
+    "email": "emyvibex39@gmail.com",
+    "password": "345227",
+    "balance": 0,
+    "withdrawable_balance": 0.1,
+    "referral_code_used": "NEWUSER1",
+    "user_referral_code": "EMENIOK558",
+    "active_plans": []
   }
 ]

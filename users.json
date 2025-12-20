@@ -259,5 +259,17 @@
     "referral_code_used": "NEWUSER1",
     "user_referral_code": "SOEBLE194",
     "active_plans": []
-  }
+  },
+    {
+        "account_id": "08035731640",
+        "full_name": "Onyemaechi joy ebube",
+        "email": "ebubejoy022@gmail.com",
+        "password": "vguyv1863",
+        "balance": 0,
+        "withdrawable_balance": 0.1,
+        "referral_code_used": "NEWUSER1",
+        "user_referral_code": "ONY1640",
+        "active_plans": []
+    }
+  
 ]

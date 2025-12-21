@@ -294,7 +294,20 @@
         "referral_code_used": "NEWUSER1",
         "user_referral_code": "ADE0226",
         "active_plans": []
+    },
+  
+    {
+        "account_id": "08050349867",
+        "full_name": "Emmanuel",
+        "email": "tewogbadedayo167@gmail.com",
+        "password": "ruybd9332",
+        "balance": 0,
+        "withdrawable_balance": 0.1,
+        "referral_code_used": "NEWUSER1",
+        "user_referral_code": "EMM9867",
+        "active_plans": []
     }
+  
   
       
   

@@ -282,7 +282,20 @@
         "referral_code_used": "NEWUSER1",
         "user_referral_code": "PRO1582",
         "active_plans": []
+    },
+  
+    {
+        "account_id": "09155300226",
+        "full_name": "Adetiloye damilola favour",
+        "email": "damilolaadetiloye30@gmail.com",
+        "password": "mlyrl4912",
+        "balance": 0,
+        "withdrawable_balance": 0.1,
+        "referral_code_used": "NEWUSER1",
+        "user_referral_code": "ADE0226",
+        "active_plans": []
     }
+  
       
   
 ]
